@@ -23,9 +23,11 @@ export class Game {
 	readonly scene: Scene;
 	readonly player: Entity & Movable;
 	private readonly input = createInputState();
+	private readonly particles: Mesh[];
 
 	constructor(scene: Scene) {
 		this.scene = scene;
+		this.particles = createParticles(scene, 60);
 		this.player = {
 			mesh: createShipMesh(scene, 'player'),
 			position: new Vector3(0, 0.1, 0),
@@ -37,6 +39,7 @@ export class Game {
 	}
 
 	update(dt: number) {
+		scrollParticles(this.particles, dt);
 		movementSystem([this.player], this.input.state, dt);
 		boundarySystem(this.player, this.scene);
 	}
@@ -59,42 +62,32 @@ export function createBaseScene(scene: Scene) {
 
 	const glow = new GlowLayer('glow', scene);
 	glow.intensity = 0.6;
-
-	createGrid(scene, 24, 12);
-	createStarfield(scene, 80);
 }
 
-function createGrid(scene: Scene, size: number, divisions: number) {
-	const color = new Color3(0.08, 0.08, 0.12);
-	const half = size / 2;
-	const step = size / divisions;
-
-	for (let i = 0; i <= divisions; i++) {
-		const pos = -half + i * step;
-		MeshBuilder.CreateLines(
-			'gridH' + i,
-			{ points: [new Vector3(-half, 0, pos), new Vector3(half, 0, pos)] },
-			scene
-		).color = color;
-		MeshBuilder.CreateLines(
-			'gridV' + i,
-			{ points: [new Vector3(pos, 0, -half), new Vector3(pos, 0, half)] },
-			scene
-		).color = color;
+export function scrollParticles(particles: Mesh[], dt: number) {
+	const speed = 3;
+	for (const p of particles) {
+		p.position.z += speed * dt;
+		if (p.position.z > 15) {
+			p.position.z -= 30;
+			p.position.x = (Math.random() - 0.5) * 30;
+		}
 	}
 }
 
-function createStarfield(scene: Scene, count: number) {
-	const starMat = new StandardMaterial('starMat', scene);
-	starMat.disableLighting = true;
-	starMat.emissiveColor = new Color3(0.8, 0.8, 1);
+function createParticles(scene: Scene, count: number): Mesh[] {
+	const mat = new StandardMaterial('particleMat', scene);
+	mat.disableLighting = true;
+	mat.emissiveColor = new Color3(0.6, 0.7, 1);
 
+	const particles: Mesh[] = [];
 	for (let i = 0; i < count; i++) {
-		const x = (Math.random() - 0.5) * 40;
-		const z = (Math.random() - 0.5) * 40;
-		const y = -0.2 - Math.random() * 0.5;
-		const star = MeshBuilder.CreateBox('star' + i, { size: 0.04 + Math.random() * 0.04 }, scene);
-		star.position.set(x, y, z);
-		star.material = starMat;
+		const p = MeshBuilder.CreateBox('p' + i, { size: 0.02 + Math.random() * 0.04 }, scene);
+		p.position.x = (Math.random() - 0.5) * 30;
+		p.position.z = (Math.random() - 0.5) * 30;
+		p.position.y = -0.5 - Math.random() * 2;
+		p.material = mat;
+		particles.push(p);
 	}
+	return particles;
 }
