@@ -10,6 +10,7 @@ import { createShipMesh } from '$lib/babylon/ship';
 import { createInputState } from './input';
 import { movementSystem } from './movement';
 import type { Movable } from './movement';
+import { boundarySystem } from './boundary';
 
 export interface Entity {
 	mesh: Mesh;
@@ -35,6 +36,7 @@ export class Game {
 
 	update(dt: number) {
 		movementSystem([this.player], this.input.state, dt);
+		boundarySystem(this.player, this.scene);
 	}
 
 	dispose() {
