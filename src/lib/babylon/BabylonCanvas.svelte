@@ -2,14 +2,11 @@
 	import { Engine } from '@babylonjs/core/Engines/engine';
 	import type { Scene } from '@babylonjs/core/scene';
 
-	import type { Snippet } from 'svelte';
-
 	interface Props {
 		createScene: (engine: Engine, canvas: HTMLCanvasElement) => Scene;
-		children?: Snippet;
 	}
 
-	let { createScene, children }: Props = $props();
+	let { createScene }: Props = $props();
 
 	let canvasRef: HTMLCanvasElement;
 	let wrapRef: HTMLDivElement;
@@ -47,7 +44,6 @@
 <div class="canvas-wrap" bind:this={wrapRef}>
 	<canvas bind:this={canvasRef}></canvas>
 </div>
-{@render children?.()}
 
 <style>
 	.canvas-wrap {
