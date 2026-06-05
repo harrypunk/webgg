@@ -20,6 +20,8 @@ This file contains rules and conventions for AI agents working on this project.
 - Follow **SOLID principles** and keep code clean, readable, and maintainable.
 - Prefer small, focused functions and components with single responsibilities.
 - Avoid duplication (DRY) and unnecessary complexity.
+- **Favor composition over inheritance.** Build behavior by composing functions, components, and utilities rather than using class hierarchies.
+- In Svelte, leverage **actions** (`use:` directive) and element attachments for reusable, cross-cutting concerns — use this AOP / mixin style where it fits.
 
 ## Linting & Formatting
 
