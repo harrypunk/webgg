@@ -28,29 +28,29 @@
 	}
 
 	:global(body) {
-		font-family:
-			system-ui,
-			-apple-system,
-			BlinkMacSystemFont,
-			'Segoe UI',
-			Roboto,
-			sans-serif;
-		background: #0f0f1a;
-		color: #e0e0e0;
+		font-family: 'Courier New', Courier, monospace;
+		background: #000;
+		color: #c0c0c0;
 		line-height: 1.6;
 	}
 
 	header {
 		padding: 1rem 2rem;
-		border-bottom: 1px solid #2a2a3a;
-		background: #16162a;
+		border-bottom: 2px solid #00ff41;
+		background: #0a0a0a;
 	}
 
 	nav a {
-		color: #00d4ff;
+		color: #ffff00;
 		text-decoration: none;
-		font-size: 1.25rem;
+		font-size: 1.5rem;
 		font-weight: 700;
+		text-shadow: 0 0 8px #ffff00;
+	}
+
+	nav a:hover {
+		color: #00ff41;
+		text-shadow: 0 0 8px #00ff41;
 	}
 
 	main {

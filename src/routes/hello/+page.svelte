@@ -97,16 +97,17 @@
 
 	h1 {
 		font-size: 1.75rem;
-		color: #00d4ff;
+		color: #ffff00;
+		text-shadow: 0 0 8px #ffff00;
 	}
 
 	.canvas-wrap {
 		width: 100%;
 		aspect-ratio: 16 / 9;
-		border: 1px solid #2a2a3a;
-		border-radius: 12px;
+		border: 2px solid #00ff41;
 		overflow: hidden;
 		background: #000;
+		box-shadow: 0 0 12px #00ff41;
 	}
 
 	canvas {
@@ -119,9 +120,11 @@
 		color: #00d4ff;
 		text-decoration: none;
 		font-size: 0.95rem;
+		text-shadow: 0 0 4px #00d4ff;
 	}
 
 	.back:hover {
-		text-decoration: underline;
+		color: #ffff00;
+		text-shadow: 0 0 4px #ffff00;
 	}
 </style>
