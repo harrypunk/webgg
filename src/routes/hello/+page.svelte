@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { onMount } from 'svelte';
 	import { Engine } from '@babylonjs/core/Engines/engine';
 	import { Scene } from '@babylonjs/core/scene';
 	import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
@@ -9,38 +8,7 @@
 	import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
 	import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 	import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-
-	let canvasRef: HTMLCanvasElement;
-	let wrapRef: HTMLDivElement;
-
-	onMount(() => {
-		const rect = wrapRef.getBoundingClientRect();
-		canvasRef.width = rect.width;
-		canvasRef.height = rect.height;
-
-		const engine = new Engine(canvasRef, true);
-		const scene = createScene(engine, canvasRef);
-
-		engine.runRenderLoop(() => {
-			scene.render();
-		});
-
-		const resizeObs = new ResizeObserver((entries) => {
-			for (const entry of entries) {
-				const { width, height } = entry.contentRect;
-				canvasRef.width = width;
-				canvasRef.height = height;
-				engine.resize();
-			}
-		});
-		resizeObs.observe(wrapRef);
-
-		return () => {
-			resizeObs.disconnect();
-			scene.dispose();
-			engine.dispose();
-		};
-	});
+	import BabylonCanvas from '$lib/babylon/BabylonCanvas.svelte';
 
 	function createScene(engine: Engine, canvas: HTMLCanvasElement): Scene {
 		const scene = new Scene(engine);
@@ -82,9 +50,7 @@
 
 <section class="page">
 	<h1>Hello Babylon</h1>
-	<div class="canvas-wrap" bind:this={wrapRef}>
-		<canvas bind:this={canvasRef}></canvas>
-	</div>
+	<BabylonCanvas {createScene} />
 	<a href={resolve('/')} class="back">← Back to Games</a>
 </section>
 
@@ -99,21 +65,6 @@
 		font-size: 1.75rem;
 		color: #ffff00;
 		text-shadow: 0 0 8px #ffff00;
-	}
-
-	.canvas-wrap {
-		width: 100%;
-		aspect-ratio: 16 / 9;
-		border: 2px solid #00ff41;
-		overflow: hidden;
-		background: #000;
-		box-shadow: 0 0 12px #00ff41;
-	}
-
-	canvas {
-		width: 100%;
-		height: 100%;
-		outline: none;
 	}
 
 	.back {
