@@ -31,6 +31,7 @@ export class Game {
 			velocity: Vector3.Zero(),
 			speed: 8
 		};
+		this.player.mesh.scaling.setAll(0.5);
 		this.player.mesh.position.copyFrom(this.player.position);
 	}
 
