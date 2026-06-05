@@ -24,8 +24,8 @@ export function createShipMesh(scene: Scene, name = 'ship'): Mesh {
 	vertexData.applyToMesh(mesh);
 
 	const mat = new StandardMaterial(name + 'Mat', scene);
-	mat.diffuseColor = new Color3(0, 0.85, 1);
-	mat.emissiveColor = new Color3(0, 0.3, 0.4);
+	mat.disableLighting = true;
+	mat.emissiveColor = new Color3(0, 1, 0.6);
 	mesh.material = mat;
 
 	return mesh;
