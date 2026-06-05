@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
 	import { Engine } from '@babylonjs/core/Engines/engine';
 	import { Scene } from '@babylonjs/core/scene';
 	import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
@@ -51,7 +50,6 @@
 <section class="page">
 	<h1>Hello Babylon</h1>
 	<BabylonCanvas {createScene} />
-	<a href={resolve('/')} class="back">← Back to Games</a>
 </section>
 
 <style>
@@ -65,17 +63,5 @@
 		font-size: 1.75rem;
 		color: #ffff00;
 		text-shadow: 0 0 8px #ffff00;
-	}
-
-	.back {
-		color: #00d4ff;
-		text-decoration: none;
-		font-size: 0.95rem;
-		text-shadow: 0 0 4px #00d4ff;
-	}
-
-	.back:hover {
-		color: #ffff00;
-		text-shadow: 0 0 4px #ffff00;
 	}
 </style>
