@@ -1,42 +1,64 @@
-# sv
+# WebGG
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A website hosting multiple [Babylon.js](https://www.babylonjs.com/) games and experiments, built with [SvelteKit](https://svelte.dev/docs/kit).
 
-## Creating a project
+## Tech Stack
 
-If you're seeing this, you've probably already done this step. Congrats!
+- [SvelteKit](https://svelte.dev/docs/kit) — full-stack web framework
+- [Babylon.js](https://www.babylonjs.com/) — 3D game engine
+- [Bun](https://bun.sh/) — package manager and runtime
+- [TypeScript](https://www.typescriptlang.org/)
+- [Prettier](https://prettier.io/) + [ESLint](https://eslint.org/)
 
-```sh
-# create a new project
-npx sv create my-app
-```
+## Games
 
-To recreate this project with the same configuration:
+| Game          | Route                          | Description                                                         |
+| ------------- | ------------------------------ | ------------------------------------------------------------------- |
+| Hello Babylon | [`/hello`](./src/routes/hello) | Basic Babylon.js playground with a spinning sphere and ground plane |
 
-```sh
-# recreate this project
-bun x sv@0.15.4 create --template minimal --types ts --add prettier eslint --install bun webgg
-```
+## Getting Started
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Install dependencies:
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+bun install
 ```
 
-## Building
-
-To create a production version of your app:
+Start the dev server:
 
 ```sh
-npm run build
+bun run dev
 ```
 
-You can preview the production build with `npm run preview`.
+## Scripts
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+| Script            | Description                  |
+| ----------------- | ---------------------------- |
+| `bun run dev`     | Start the Vite dev server    |
+| `bun run build`   | Build for production         |
+| `bun run preview` | Preview the production build |
+| `bun run check`   | Run Svelte type-checking     |
+| `bun run lint`    | Run Prettier and ESLint      |
+| `bun run format`  | Auto-format with Prettier    |
+
+## Project Structure
+
+```
+src/
+├── lib/          # Shared code, utilities, assets
+└── routes/       # SvelteKit routes (file-based routing)
+    ├── +page.svelte          # Homepage — game gallery
+    ├── +layout.svelte        # Root layout
+    └── hello/
+        └── +page.svelte      # Hello Babylon game
+```
+
+## Adding a New Game
+
+1. Create a new route folder under `src/routes/` (e.g., `src/routes/my-game/`)
+2. Add a `+page.svelte` with your Babylon.js scene
+3. Register the game in `src/routes/+page.svelte` by adding to the `games` array
+
+## License
+
+Private
