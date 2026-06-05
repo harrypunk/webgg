@@ -8,6 +8,7 @@
 	import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 	import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 	import BabylonCanvas from '$lib/babylon/BabylonCanvas.svelte';
+	import { CanvasSize } from '$lib/babylon/canvasSize';
 
 	function createScene(engine: Engine, canvas: HTMLCanvasElement): Scene {
 		const scene = new Scene(engine);
@@ -49,7 +50,7 @@
 
 <section class="page">
 	<h1>Hello Babylon</h1>
-	<BabylonCanvas {createScene} />
+	<BabylonCanvas {createScene} size={CanvasSize.Landscape} />
 </section>
 
 <style>
@@ -57,6 +58,9 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		flex: 1;
+		min-height: 0;
+		overflow: hidden;
 	}
 
 	h1 {

@@ -32,6 +32,9 @@
 		background: #000;
 		color: #c0c0c0;
 		line-height: 1.6;
+		display: flex;
+		flex-direction: column;
+		min-height: 100dvh;
 	}
 
 	header {
@@ -54,8 +57,13 @@
 	}
 
 	main {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
 		max-width: 1200px;
+		width: 100%;
 		margin: 0 auto;
 		padding: 2rem;
+		min-height: 0;
 	}
 </style>
