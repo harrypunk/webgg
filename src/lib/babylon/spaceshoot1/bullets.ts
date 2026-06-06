@@ -4,6 +4,7 @@ import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import type { Scene } from '@babylonjs/core/scene';
 import type { Mesh } from '@babylonjs/core/Meshes/mesh';
+import type { System } from './types';
 
 export interface Bullet {
 	mesh: Mesh;
@@ -46,4 +47,33 @@ export function cleanupBullets(bullets: Bullet[]): Bullet[] {
 		}
 	}
 	return alive;
+}
+
+export class BulletSystem implements System {
+	items: Bullet[] = [];
+	private readonly material: StandardMaterial;
+	private fireTimer = 0;
+
+	constructor(
+		private readonly scene: Scene,
+		private readonly getSpawnPosition: () => Vector3,
+		private readonly isFiring: () => boolean
+	) {
+		this.material = createBulletMaterial(scene);
+	}
+
+	update(dt: number) {
+		this.fireTimer -= dt;
+		if (this.isFiring() && this.fireTimer <= 0) {
+			this.items.push(spawnBullet(this.scene, this.getSpawnPosition(), this.material));
+			this.fireTimer = 0.05;
+		}
+		bulletMovementSystem(this.items, dt);
+		this.items = cleanupBullets(this.items);
+	}
+
+	dispose() {
+		this.material.dispose();
+		for (const b of this.items) b.mesh.dispose();
+	}
 }

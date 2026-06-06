@@ -1,5 +1,5 @@
 import type { Scene } from '@babylonjs/core/scene';
-import type { Entity } from './game';
+import type { Entity } from './types';
 
 export function boundarySystem(entity: Entity, scene: Scene) {
 	const camera = scene.activeCamera;

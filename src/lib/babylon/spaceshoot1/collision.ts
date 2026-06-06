@@ -1,6 +1,9 @@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import type { Bullet } from './bullets';
 import type { Enemy } from './enemies';
+import type { BulletSystem } from './bullets';
+import type { EnemySystem } from './enemies';
+import type { System } from './types';
 
 export function bulletEnemyCollision(bullets: Bullet[], enemies: Enemy[]) {
 	const hitRadius = 0.5;
@@ -18,4 +21,17 @@ export function bulletEnemyCollision(bullets: Bullet[], enemies: Enemy[]) {
 			}
 		}
 	}
+}
+
+export class CollisionSystem implements System {
+	constructor(
+		private readonly bullets: BulletSystem,
+		private readonly enemies: EnemySystem
+	) {}
+
+	update() {
+		bulletEnemyCollision(this.bullets.items, this.enemies.items);
+	}
+
+	dispose() {}
 }

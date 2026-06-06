@@ -3,6 +3,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import type { Scene } from '@babylonjs/core/scene';
 import type { Mesh } from '@babylonjs/core/Meshes/mesh';
+import type { System } from './types';
 
 export interface Enemy {
 	mesh: Mesh;
@@ -41,4 +42,30 @@ export function cleanupEnemies(enemies: Enemy[]): Enemy[] {
 		}
 	}
 	return alive;
+}
+
+export class EnemySystem implements System {
+	items: Enemy[] = [];
+	private readonly material: StandardMaterial;
+	private spawnTimer = 0;
+
+	constructor(private readonly scene: Scene) {
+		this.material = createEnemyMaterial(scene);
+	}
+
+	update(dt: number) {
+		this.spawnTimer -= dt;
+		if (this.spawnTimer <= 0) {
+			const x = (Math.random() - 0.5) * 20;
+			this.items.push(spawnEnemy(this.scene, x, -12, this.material));
+			this.spawnTimer = 0.3 + Math.random() * 0.5;
+		}
+		enemyMovementSystem(this.items, dt);
+		this.items = cleanupEnemies(this.items);
+	}
+
+	dispose() {
+		this.material.dispose();
+		for (const e of this.items) e.mesh.dispose();
+	}
 }

@@ -1,4 +1,4 @@
-import type { Entity } from './game';
+import type { Entity } from './types';
 import type { InputState } from './input';
 
 export interface Movable {
