@@ -12,10 +12,10 @@ A website hosting multiple [Babylon.js](https://www.babylonjs.com/) games and ex
 
 ## Games
 
-| Game          | Route                                | Description                                              |
-| ------------- | ------------------------------------ | -------------------------------------------------------- |
-| Hello Babylon | [`/hello`](./src/routes/hello)       | Basic Babylon.js playground with a spinning sphere       |
-| Space Shoot 1 | [`/spaceshoot1`](./src/routes/spaceshoot1) | Top-down space shooter — WASD to move, click to fire     |
+| Game          | Route                                      | Description                                          |
+| ------------- | ------------------------------------------ | ---------------------------------------------------- |
+| Hello Babylon | [`/hello`](./src/routes/hello)             | Basic Babylon.js playground with a spinning sphere   |
+| Space Shoot 1 | [`/spaceshoot1`](./src/routes/spaceshoot1) | Top-down space shooter — WASD to move, click to fire |
 
 ## Getting Started
 
@@ -82,13 +82,13 @@ Games follow an **ECS-lite** pattern:
 
 Systems are organized by domain and live in their own files:
 
-| System            | Responsibility                                    |
-| ----------------- | ------------------------------------------------- |
-| `BackgroundSystem`| Scrolls star field particles                      |
-| `PlayerSystem`    | Handles ship movement, input, boundary clamping   |
-| `BulletSystem`    | Spawns bullets from any source, moves, cleans up  |
-| `EnemySystem`     | Spawns enemies from top, moves, cleans up         |
-| `CollisionSystem` | Detects bullet-enemy hits, marks both dead        |
+| System             | Responsibility                                   |
+| ------------------ | ------------------------------------------------ |
+| `BackgroundSystem` | Scrolls star field particles                     |
+| `PlayerSystem`     | Handles ship movement, input, boundary clamping  |
+| `BulletSystem`     | Spawns bullets from any source, moves, cleans up |
+| `EnemySystem`      | Spawns enemies from top, moves, cleans up        |
+| `CollisionSystem`  | Detects bullet-enemy hits, marks both dead       |
 
 Dependencies between systems are injected via **callbacks**, not concrete types — e.g. `BulletSystem` takes `getSpawnPosition: () => Vector3` and `isFiring: () => boolean`, so it can be reused for player, enemies, or turrets without change.
 

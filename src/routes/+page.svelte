@@ -5,7 +5,7 @@
 		id: string;
 		title: string;
 		description: string;
-		path: '/hello' | '/spaceshoot1';
+		path: '/hello' | '/spaceshoot1' | '/pingpong';
 	}
 
 	const games: Game[] = [
@@ -20,6 +20,12 @@
 			title: 'Space Shoot 1',
 			description: 'Top-down space shooter. Work in progress.',
 			path: '/spaceshoot1'
+		},
+		{
+			id: 'pingpong',
+			title: 'Ping Pong',
+			description: 'Classic paddle game. Work in progress.',
+			path: '/pingpong'
 		}
 	];
 </script>
