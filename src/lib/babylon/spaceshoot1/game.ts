@@ -12,6 +12,21 @@ import { createInputState } from './input';
 import { movementSystem } from './movement';
 import type { Movable } from './movement';
 import { boundarySystem } from './boundary';
+import {
+	createBulletMaterial,
+	spawnBullet,
+	bulletMovementSystem,
+	cleanupBullets,
+	type Bullet
+} from './bullets';
+import {
+	createEnemyMaterial,
+	spawnEnemy,
+	enemyMovementSystem,
+	cleanupEnemies,
+	type Enemy
+} from './enemies';
+import { bulletEnemyCollision } from './collision';
 
 export interface Entity {
 	mesh: Mesh;
@@ -22,11 +37,18 @@ export interface Entity {
 export class Game {
 	readonly scene: Scene;
 	readonly player: Entity & Movable;
-	private readonly input = createInputState();
+	private readonly input: ReturnType<typeof createInputState>;
 	private readonly particles: Mesh[];
+	private readonly bulletMat: StandardMaterial;
+	private readonly enemyMat: StandardMaterial;
+	private bullets: Bullet[] = [];
+	private enemies: Enemy[] = [];
+	private fireTimer = 0;
+	private spawnTimer = 0;
 
 	constructor(scene: Scene) {
 		this.scene = scene;
+		this.input = createInputState(scene);
 		this.particles = createParticles(scene, 60);
 		this.player = {
 			mesh: createShipMesh(scene, 'player'),
@@ -36,17 +58,47 @@ export class Game {
 		};
 		this.player.mesh.scaling.setAll(0.5);
 		this.player.mesh.position.copyFrom(this.player.position);
+		this.bulletMat = createBulletMaterial(scene);
+		this.enemyMat = createEnemyMaterial(scene);
 	}
 
 	update(dt: number) {
 		scrollParticles(this.particles, dt);
 		movementSystem([this.player], this.input.state, dt);
 		boundarySystem(this.player, this.scene);
+
+		// Fire bullets
+		this.fireTimer -= dt;
+		if (this.input.state.fire && this.fireTimer <= 0) {
+			this.bullets.push(spawnBullet(this.scene, this.player.mesh.position, this.bulletMat));
+			this.fireTimer = 0.05;
+		}
+
+		// Spawn enemies
+		this.spawnTimer -= dt;
+		if (this.spawnTimer <= 0) {
+			const x = (Math.random() - 0.5) * 20;
+			this.enemies.push(spawnEnemy(this.scene, x, -12, this.enemyMat));
+			this.spawnTimer = 0.3 + Math.random() * 0.5;
+		}
+
+		// Systems
+		bulletMovementSystem(this.bullets, dt);
+		enemyMovementSystem(this.enemies, dt);
+		bulletEnemyCollision(this.bullets, this.enemies);
+
+		// Cleanup
+		this.bullets = cleanupBullets(this.bullets);
+		this.enemies = cleanupEnemies(this.enemies);
 	}
 
 	dispose() {
 		this.input.dispose();
 		this.player.mesh.dispose();
+		this.bulletMat.dispose();
+		this.enemyMat.dispose();
+		for (const bullet of this.bullets) bullet.mesh.dispose();
+		for (const enemy of this.enemies) enemy.mesh.dispose();
 	}
 }
 
