@@ -12,9 +12,10 @@ A website hosting multiple [Babylon.js](https://www.babylonjs.com/) games and ex
 
 ## Games
 
-| Game          | Route                          | Description                                                         |
-| ------------- | ------------------------------ | ------------------------------------------------------------------- |
-| Hello Babylon | [`/hello`](./src/routes/hello) | Basic Babylon.js playground with a spinning sphere and ground plane |
+| Game          | Route                                | Description                                              |
+| ------------- | ------------------------------------ | -------------------------------------------------------- |
+| Hello Babylon | [`/hello`](./src/routes/hello)       | Basic Babylon.js playground with a spinning sphere       |
+| Space Shoot 1 | [`/spaceshoot1`](./src/routes/spaceshoot1) | Top-down space shooter — WASD to move, click to fire     |
 
 ## Getting Started
 
@@ -45,19 +46,58 @@ bun run dev
 
 ```
 src/
-├── lib/          # Shared code, utilities, assets
-└── routes/       # SvelteKit routes (file-based routing)
-    ├── +page.svelte          # Homepage — game gallery
-    ├── +layout.svelte        # Root layout
-    └── hello/
-        └── +page.svelte      # Hello Babylon game
+├── lib/
+│   ├── babylon/
+│   │   ├── BabylonCanvas.svelte      # Reusable canvas/engine/scene component
+│   │   ├── canvasSize.ts             # Portrait / Landscape presets
+│   │   ├── ship.ts                   # Shared ship mesh factory
+│   │   └── spaceshoot1/              # Space Shoot 1 game logic
+│   │       ├── types.ts              # Shared interfaces (Entity, System)
+│   │       ├── game.ts               # Game orchestrator + scene setup
+│   │       ├── input.ts              # Keyboard + pointer input
+│   │       ├── movement.ts           # Movement system (pure function)
+│   │       ├── boundary.ts           # Viewport boundary clamping
+│   │       ├── bullets.ts            # Bullet factory + BulletSystem
+│   │       ├── enemies.ts            # Enemy factory + EnemySystem
+│   │       ├── collision.ts          # Collision detection + CollisionSystem
+│   │       ├── player.ts             # PlayerSystem
+│   │       └── background.ts         # BackgroundSystem (star particles)
+│   └── assets/
+└── routes/
+    ├── +page.svelte                  # Homepage — game gallery
+    ├── +layout.svelte                # Root layout
+    ├── hello/
+    │   └── +page.svelte              # Hello Babylon game
+    └── spaceshoot1/
+        └── +page.svelte              # Space Shoot 1 game
 ```
+
+## Architecture
+
+Games follow an **ECS-lite** pattern:
+
+- **Entities** are plain data objects (`mesh`, `position`, `velocity`)
+- **Systems** are classes that implement the `System` interface (`update(dt)`, `dispose()`)
+- **Game** is a thin orchestrator — it registers systems in a list and loops them each frame
+
+Systems are organized by domain and live in their own files:
+
+| System            | Responsibility                                    |
+| ----------------- | ------------------------------------------------- |
+| `BackgroundSystem`| Scrolls star field particles                      |
+| `PlayerSystem`    | Handles ship movement, input, boundary clamping   |
+| `BulletSystem`    | Spawns bullets from any source, moves, cleans up  |
+| `EnemySystem`     | Spawns enemies from top, moves, cleans up         |
+| `CollisionSystem` | Detects bullet-enemy hits, marks both dead        |
+
+Dependencies between systems are injected via **callbacks**, not concrete types — e.g. `BulletSystem` takes `getSpawnPosition: () => Vector3` and `isFiring: () => boolean`, so it can be reused for player, enemies, or turrets without change.
 
 ## Adding a New Game
 
 1. Create a new route folder under `src/routes/` (e.g., `src/routes/my-game/`)
 2. Add a `+page.svelte` with your Babylon.js scene
-3. Register the game in `src/routes/+page.svelte` by adding to the `games` array
+3. Put shared game logic under `src/lib/babylon/my-game/`
+4. Register the game in `src/routes/+page.svelte` by adding to the `games` array
 
 ## License
 
