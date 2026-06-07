@@ -5,6 +5,7 @@
 	import type { Nullable } from '@babylonjs/core/types';
 	import type { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import { getSceneContext } from './context';
+	import { useMovement } from './useMovement';
 
 	interface Props {
 		name?: string;
@@ -53,31 +54,10 @@
 			shadowGenerator.addShadowCaster(paddle);
 		}
 
-		const input = { a: false, d: false };
-
-		const onKeyDown = (e: KeyboardEvent) => {
-			if (e.code === 'KeyA') input.a = true;
-			if (e.code === 'KeyD') input.d = true;
-		};
-
-		const onKeyUp = (e: KeyboardEvent) => {
-			if (e.code === 'KeyA') input.a = false;
-			if (e.code === 'KeyD') input.d = false;
-		};
-
-		window.addEventListener('keydown', onKeyDown);
-		window.addEventListener('keyup', onKeyUp);
-
-		const observer = sceneCtx.scene.onBeforeRenderObservable.add(() => {
-			const dt = sceneCtx.scene!.getEngine().getDeltaTime() / 1000;
-			if (input.a) paddle.position.x -= speed * dt;
-			if (input.d) paddle.position.x += speed * dt;
-		});
+		const detachMovement = useMovement(sceneCtx.scene, paddle, { speed });
 
 		return () => {
-			sceneCtx.scene?.onBeforeRenderObservable.remove(observer);
-			window.removeEventListener('keydown', onKeyDown);
-			window.removeEventListener('keyup', onKeyUp);
+			detachMovement();
 			paddle.dispose();
 			mat.dispose();
 		};
