@@ -5,7 +5,7 @@
 		id: string;
 		title: string;
 		description: string;
-		path: '/hello' | '/pingpong';
+		path: '/hello' | '/pingpong' | '/example/switch1';
 	}
 
 	const games: Game[] = [
@@ -20,6 +20,12 @@
 			title: 'Ping Pong',
 			description: 'Classic paddle game. Work in progress.',
 			path: '/pingpong'
+		},
+		{
+			id: 'switch1',
+			title: 'Scene Switcher',
+			description: 'Cycle through cube, sphere, and cone scenes.',
+			path: '/example/switch1'
 		}
 	];
 </script>
