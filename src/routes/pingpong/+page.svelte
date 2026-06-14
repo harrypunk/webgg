@@ -15,6 +15,7 @@
 	import DirectionalLight from './DirectionalLight.svelte';
 	import ShadowGenerator from './ShadowGenerator.svelte';
 	import Ground from './Ground.svelte';
+	import FloorVFX from './FloorVFX.svelte';
 	import Paddle from './Paddle.svelte';
 	import AxisGizmo from './AxisGizmo.svelte';
 
@@ -34,18 +35,20 @@
 				<Scene bind:scene>
 					<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} interactive={debug} />
 					<HemisphereLight
+						intensity={0.15}
 						diffuse={new Color3(0.8, 0.85, 1)}
 						groundColor={new Color3(0.2, 0.2, 0.25)}
 					/>
 					<DirectionalLight
 						direction={new Vector3(0, -1, 0.3)}
 						position={new Vector3(0, 10, -6)}
-						intensity={1.2}
+						intensity={0.5}
 						diffuse={new Color3(1, 0.95, 0.85)}
 						bind:light
 					/>
 					<ShadowGenerator {light} bind:shadowGenerator />
 					<Ground />
+					<FloorVFX />
 					<Paddle {shadowGenerator} />
 					<AxisGizmo visible={debug} />
 				</Scene>
