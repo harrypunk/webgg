@@ -24,29 +24,34 @@
 <section class="page">
 	<h1>Ping Pong</h1>
 	<div class="canvas-layout">
-		<Canvas>
-			<Scene bind:scene>
-				<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} />
-				<HemisphereLight
-					diffuse={new Color3(0.8, 0.85, 1)}
-					groundColor={new Color3(0.2, 0.2, 0.25)}
-				/>
-				<DirectionalLight
-					direction={new Vector3(0, -1, 0.3)}
-					position={new Vector3(0, 10, -6)}
-					intensity={1.2}
-					diffuse={new Color3(1, 0.95, 0.85)}
-					bind:light
-				/>
-				<ShadowGenerator {light} bind:shadowGenerator />
-				<Ground />
-				<Paddle {shadowGenerator} />
-				<AxisGizmo visible={debug} />
-			</Scene>
-		</Canvas>
-		<button class="debug-btn" onclick={() => (debug = !debug)}>
-			Debug: {debug ? 'ON' : 'OFF'}
-		</button>
+		<div class="canvas-pane">
+			<Canvas>
+				<Scene bind:scene>
+					<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} />
+					<HemisphereLight
+						diffuse={new Color3(0.8, 0.85, 1)}
+						groundColor={new Color3(0.2, 0.2, 0.25)}
+					/>
+					<DirectionalLight
+						direction={new Vector3(0, -1, 0.3)}
+						position={new Vector3(0, 10, -6)}
+						intensity={1.2}
+						diffuse={new Color3(1, 0.95, 0.85)}
+						bind:light
+					/>
+					<ShadowGenerator {light} bind:shadowGenerator />
+					<Ground />
+					<Paddle {shadowGenerator} />
+					<AxisGizmo visible={debug} />
+				</Scene>
+			</Canvas>
+		</div>
+		<aside class="side-panel">
+			<h2>Controls</h2>
+			<button class="debug-btn" onclick={() => (debug = !debug)}>
+				Debug: {debug ? 'ON' : 'OFF'}
+			</button>
+		</aside>
 	</div>
 </section>
 
@@ -67,18 +72,43 @@
 	}
 
 	.canvas-layout {
-		position: relative;
 		flex: 1;
 		min-height: 0;
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+		overflow: hidden;
+	}
+
+	.canvas-pane {
+		flex: 1;
+		min-width: 0;
+		position: relative;
 		display: flex;
 		flex-direction: column;
 	}
 
+	.side-panel {
+		width: 220px;
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding: 1rem;
+		background: #000;
+		border: 2px solid #00ff41;
+		box-shadow: 0 0 12px #00ff41;
+		overflow-y: auto;
+	}
+
+	.side-panel h2 {
+		font-size: 1rem;
+		color: #00ff41;
+		text-shadow: 0 0 4px #00ff41;
+		margin: 0;
+	}
+
 	.debug-btn {
-		position: absolute;
-		right: 1rem;
-		top: 1rem;
-		z-index: 10;
 		padding: 0.5rem 1rem;
 		font-family: inherit;
 		font-size: 0.875rem;
