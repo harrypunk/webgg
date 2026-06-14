@@ -6,6 +6,7 @@
       "name": "webgg",
       "dependencies": {
         "@babylonjs/core": "^9.11.0",
+        "@babylonjs/gui": "^9.11.0",
         "@babylonjs/loaders": "^9.11.0",
         "@babylonjs/materials": "^9.11.0",
       },
@@ -31,6 +32,8 @@
   },
   "packages": {
     "@babylonjs/core": ["@babylonjs/core@9.11.0", "https://mirrors.cloud.tencent.com/npm/@babylonjs/core/-/core-9.11.0.tgz", {}, "sha512-MQH6Lop6Dn06n3gW8/CADb3FrO3jVudYHYZVu2TPNH0hXyJGAVPtVRpudF12UHn5ZV0ByQ1gu71vfKj88rFDCg=="],
+
+    "@babylonjs/gui": ["@babylonjs/gui@9.12.0", "https://mirrors.cloud.tencent.com/npm/@babylonjs/gui/-/gui-9.12.0.tgz", { "peerDependencies": { "@babylonjs/core": "^9.0.0" } }, "sha512-j2nOjV6sUiTItYBModFIyrC01hQ19Dln32zZQ07ucLklESERf5gZ5FPaLt8IglrdYvg+DtX6WENgabXlczOd9w=="],
 
     "@babylonjs/loaders": ["@babylonjs/loaders@9.11.0", "https://mirrors.cloud.tencent.com/npm/@babylonjs/loaders/-/loaders-9.11.0.tgz", { "peerDependencies": { "@babylonjs/core": "^9.0.0", "babylonjs-gltf2interface": "^9.0.0" } }, "sha512-l+bVNG3zOG4FhBT0WVlZSb49WVyzoduACMop/RDKQjVsSfUg2lMeKnHlrGccp/bsRxlR1Y/pKD9GQTkXsQ7gmQ=="],
 

@@ -48,7 +48,7 @@
 		paddle.material = mat;
 		paddle.position.x = startX;
 		paddle.position.z = startZ;
-		paddle.position.y = 0.5;
+		paddle.position.y = height / 2;
 
 		if (shadowGenerator) {
 			shadowGenerator.addShadowCaster(paddle);

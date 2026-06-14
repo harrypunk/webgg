@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { TargetCamera } from '@babylonjs/core/Cameras/targetCamera';
+	import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera';
 	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-	import { getSceneContext } from '$lib/babylon/context';
+	import { getEngineContext, getSceneContext } from '$lib/babylon/context';
 
 	interface Props {
 		name?: string;
@@ -16,14 +16,23 @@
 	}: Props = $props();
 
 	const sceneCtx = getSceneContext();
+	const engineCtx = getEngineContext();
 
 	$effect(() => {
 		if (!sceneCtx.scene) return;
 
-		const camera = new TargetCamera(name, position, sceneCtx.scene);
+		const camera = new UniversalCamera(name, position, sceneCtx.scene);
 		camera.setTarget(target);
 
+		// Attach mouse/touch controls so the user can rotate/zoom the view.
+		// The canvas comes from the engine context set up by Canvas.svelte.
+		const canvas = engineCtx.canvas;
+		if (canvas) {
+			camera.attachControl(canvas, true);
+		}
+
 		return () => {
+			camera.detachControl();
 			camera.dispose();
 		};
 	});

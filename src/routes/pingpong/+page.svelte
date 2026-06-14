@@ -13,33 +13,41 @@
 	import ShadowGenerator from './ShadowGenerator.svelte';
 	import Ground from './Ground.svelte';
 	import Paddle from './Paddle.svelte';
+	import AxisGizmo from './AxisGizmo.svelte';
 
 	let scene = $state<Nullable<BabylonScene>>(null);
 	let light = $state<Nullable<DirLight>>(null);
 	let shadowGenerator = $state<Nullable<ShadowGen>>(null);
+	let debug = $state(false);
 </script>
 
 <section class="page">
 	<h1>Ping Pong</h1>
-	<Canvas>
-		<Scene bind:scene>
-			<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} />
-			<HemisphereLight
-				diffuse={new Color3(0.8, 0.85, 1)}
-				groundColor={new Color3(0.2, 0.2, 0.25)}
-			/>
-			<DirectionalLight
-				direction={new Vector3(-1, -0.3, 0.5)}
-				position={new Vector3(5, 8, -5)}
-				intensity={1.2}
-				diffuse={new Color3(1, 0.95, 0.85)}
-				bind:light
-			/>
-			<ShadowGenerator {light} bind:shadowGenerator />
-			<Ground />
-			<Paddle {shadowGenerator} />
-		</Scene>
-	</Canvas>
+	<div class="canvas-layout">
+		<Canvas>
+			<Scene bind:scene>
+				<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} />
+				<HemisphereLight
+					diffuse={new Color3(0.8, 0.85, 1)}
+					groundColor={new Color3(0.2, 0.2, 0.25)}
+				/>
+				<DirectionalLight
+					direction={new Vector3(0, -1, 0.3)}
+					position={new Vector3(0, 10, -6)}
+					intensity={1.2}
+					diffuse={new Color3(1, 0.95, 0.85)}
+					bind:light
+				/>
+				<ShadowGenerator {light} bind:shadowGenerator />
+				<Ground />
+				<Paddle {shadowGenerator} />
+				<AxisGizmo visible={debug} />
+			</Scene>
+		</Canvas>
+		<button class="debug-btn" onclick={() => (debug = !debug)}>
+			Debug: {debug ? 'ON' : 'OFF'}
+		</button>
+	</div>
 </section>
 
 <style>
@@ -56,5 +64,34 @@
 		font-size: 1.75rem;
 		color: #ffff00;
 		text-shadow: 0 0 8px #ffff00;
+	}
+
+	.canvas-layout {
+		position: relative;
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.debug-btn {
+		position: absolute;
+		right: 1rem;
+		top: 1rem;
+		z-index: 10;
+		padding: 0.5rem 1rem;
+		font-family: inherit;
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: #00ff41;
+		background: #000;
+		border: 2px solid #00ff41;
+		box-shadow: 0 0 8px #00ff41;
+		cursor: pointer;
+	}
+
+	.debug-btn:hover {
+		color: #000;
+		background: #00ff41;
 	}
 </style>
