@@ -6,9 +6,10 @@
 
 	interface Props {
 		children?: Snippet;
+		element?: HTMLElement;
 	}
 
-	let { children }: Props = $props();
+	let { children, element = $bindable() }: Props = $props();
 
 	let canvasRef = $state<Nullable<HTMLCanvasElement>>(null);
 	let width = $state(0);
@@ -49,13 +50,14 @@
 	});
 </script>
 
-<div class="canvas-wrap" bind:clientWidth={width} bind:clientHeight={height}>
+<div class="canvas-wrap" bind:this={element} bind:clientWidth={width} bind:clientHeight={height}>
 	<canvas bind:this={canvasRef}></canvas>
 	{@render children?.()}
 </div>
 
 <style>
 	.canvas-wrap {
+		position: relative;
 		flex: 1;
 		min-height: 0;
 		border: 2px solid #00ff41;

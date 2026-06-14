@@ -7,6 +7,9 @@
 	import type { ShadowGenerator as ShadowGen } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
+	import { fullscreen } from '$lib/attachments/fullscreen';
+	import FullscreenButton from '$lib/components/FullscreenButton.svelte';
+	import FullscreenIcon from '$lib/components/FullscreenIcon.svelte';
 	import Camera from './Camera.svelte';
 	import HemisphereLight from './HemisphereLight.svelte';
 	import DirectionalLight from './DirectionalLight.svelte';
@@ -19,13 +22,14 @@
 	let light = $state<Nullable<DirLight>>(null);
 	let shadowGenerator = $state<Nullable<ShadowGen>>(null);
 	let debug = $state(false);
+	let canvasElement = $state<HTMLElement>();
 </script>
 
 <section class="page">
 	<h1>Ping Pong</h1>
 	<div class="canvas-layout">
 		<div class="canvas-pane">
-			<Canvas>
+			<Canvas bind:element={canvasElement}>
 				<Scene bind:scene>
 					<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} interactive={debug} />
 					<HemisphereLight
@@ -44,6 +48,7 @@
 					<Paddle {shadowGenerator} />
 					<AxisGizmo visible={debug} />
 				</Scene>
+				<FullscreenIcon {@attach fullscreen(canvasElement)} />
 			</Canvas>
 		</div>
 		<aside class="side-panel">
@@ -51,6 +56,7 @@
 			<button class="debug-btn" onclick={() => (debug = !debug)}>
 				Debug: {debug ? 'ON' : 'OFF'}
 			</button>
+			<FullscreenButton {@attach fullscreen(canvasElement)} />
 		</aside>
 	</div>
 </section>

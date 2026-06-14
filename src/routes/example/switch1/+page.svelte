@@ -3,6 +3,9 @@
 	import type { Scene as BabylonScene } from '@babylonjs/core/scene';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
+	import { fullscreen } from '$lib/attachments/fullscreen';
+	import FullscreenButton from '$lib/components/FullscreenButton.svelte';
+	import FullscreenIcon from '$lib/components/FullscreenIcon.svelte';
 	import CubeScene from './CubeScene.svelte';
 	import SphereScene from './SphereScene.svelte';
 	import ConeScene from './ConeScene.svelte';
@@ -15,6 +18,7 @@
 
 	let activeIndex = $state(0);
 	let scene = $state<Nullable<BabylonScene>>(null);
+	let canvasElement = $state<HTMLElement>();
 
 	function next() {
 		activeIndex = (activeIndex + 1) % scenes.length;
@@ -33,13 +37,15 @@
 		<button onclick={prev}>Prev</button>
 		<span class="label">{scenes[activeIndex].name}</span>
 		<button onclick={next}>Next</button>
+		<FullscreenButton {@attach fullscreen(canvasElement)} />
 	</div>
-	<Canvas>
+	<Canvas bind:element={canvasElement}>
 		{#key activeIndex}
 			<Scene bind:scene>
 				<ActiveScene />
 			</Scene>
 		{/key}
+		<FullscreenIcon {@attach fullscreen(canvasElement)} />
 	</Canvas>
 </section>
 
