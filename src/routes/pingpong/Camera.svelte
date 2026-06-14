@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { TargetCamera } from '@babylonjs/core/Cameras/targetCamera';
 	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
-	import { getSceneContext } from './context';
+	import { getSceneContext } from '$lib/babylon/context';
 
 	interface Props {
 		name?: string;

@@ -3,7 +3,7 @@
 	import type { Nullable } from '@babylonjs/core/types';
 	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
-	import { getSceneContext } from './context';
+	import { getSceneContext } from '$lib/babylon/context';
 
 	interface Props {
 		name?: string;

@@ -2,7 +2,7 @@
 	import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import type { Nullable } from '@babylonjs/core/types';
 	import type { DirectionalLight } from '@babylonjs/core/Lights/directionalLight';
-	import { getSceneContext } from './context';
+	import { getSceneContext } from '$lib/babylon/context';
 
 	interface Props {
 		mapSize?: number;

@@ -4,7 +4,7 @@
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
 	import type { Nullable } from '@babylonjs/core/types';
 	import type { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
-	import { getSceneContext } from './context';
+	import { getSceneContext } from '$lib/babylon/context';
 	import { useMovement } from './useMovement';
 
 	interface Props {

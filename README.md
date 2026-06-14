@@ -48,26 +48,25 @@ bun run dev
 src/
 ├── lib/
 │   ├── babylon/
-│   │   ├── BabylonCanvas.svelte      # Reusable canvas/engine/scene component
-│   │   ├── canvasSize.ts             # Portrait / Landscape presets
-│   │   └── ship.ts                   # Shared ship mesh factory
+│   │   ├── Canvas.svelte             # Shared engine + reactive canvas sizing
+│   │   ├── Scene.svelte              # Shared scene context + render loop
+│   │   └── context.ts                # EngineContext + SceneContext
 │   └── assets/
 └── routes/
     ├── +page.svelte                  # Homepage — game gallery
     ├── +layout.svelte                # Root layout
     ├── hello/
-    │   └── +page.svelte              # Hello Babylon game
+    │   ├── +page.svelte              # Hello Babylon page
+    │   └── HelloScene.svelte         # Scene content (camera, sphere, ground)
     └── pingpong/                     # Ping Pong game
         ├── +page.svelte              # Page + component assembly
-        ├── Canvas.svelte             # Engine + reactive canvas sizing
-        ├── Scene.svelte              # Scene context + render loop
         ├── Camera.svelte             # TargetCamera setup
         ├── HemisphereLight.svelte    # Ambient lighting
         ├── DirectionalLight.svelte   # Directional light setup
         ├── ShadowGenerator.svelte    # Shadow generator setup
         ├── Ground.svelte             # Ground mesh
         ├── Paddle.svelte             # Paddle mesh + movement
-        └── context.ts                # Engine/Scene contexts
+        └── useMovement.ts            # Reusable keyboard movement composable
 ```
 
 ## Architecture

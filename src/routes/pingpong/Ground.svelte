@@ -2,7 +2,7 @@
 	import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 	import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
-	import { getSceneContext } from './context';
+	import { getSceneContext } from '$lib/babylon/context';
 
 	interface Props {
 		name?: string;

@@ -4,8 +4,8 @@
 	import type { Nullable } from '@babylonjs/core/types';
 	import type { DirectionalLight as DirLight } from '@babylonjs/core/Lights/directionalLight';
 	import type { ShadowGenerator as ShadowGen } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
-	import Canvas from './Canvas.svelte';
-	import Scene from './Scene.svelte';
+	import Canvas from '$lib/babylon/Canvas.svelte';
+	import Scene from '$lib/babylon/Scene.svelte';
 	import Camera from './Camera.svelte';
 	import HemisphereLight from './HemisphereLight.svelte';
 	import DirectionalLight from './DirectionalLight.svelte';
