@@ -7,7 +7,7 @@
 	import type { ShadowGenerator as ShadowGen } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
-	import { fullscreen } from '$lib/attachments/fullscreen';
+	import { createFullscreen } from '$lib/attachments/fullscreen.svelte.js';
 	import FullscreenButton from '$lib/components/FullscreenButton.svelte';
 	import FullscreenIcon from '$lib/components/FullscreenIcon.svelte';
 	import Camera from './Camera.svelte';
@@ -23,6 +23,7 @@
 	let shadowGenerator = $state<Nullable<ShadowGen>>(null);
 	let debug = $state(false);
 	let canvasElement = $state<HTMLElement>();
+	const fullscreenController = createFullscreen(() => canvasElement);
 </script>
 
 <section class="page">
@@ -48,7 +49,7 @@
 					<Paddle {shadowGenerator} />
 					<AxisGizmo visible={debug} />
 				</Scene>
-				<FullscreenIcon {@attach fullscreen(canvasElement)} />
+				<FullscreenIcon {fullscreenController} />
 			</Canvas>
 		</div>
 		<aside class="side-panel">
@@ -56,7 +57,7 @@
 			<button class="debug-btn" onclick={() => (debug = !debug)}>
 				Debug: {debug ? 'ON' : 'OFF'}
 			</button>
-			<FullscreenButton {@attach fullscreen(canvasElement)} />
+			<FullscreenButton {fullscreenController} />
 		</aside>
 	</div>
 </section>

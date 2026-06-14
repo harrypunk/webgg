@@ -1,16 +1,26 @@
 <script lang="ts">
 	import { Fullscreen, Minimize } from 'lucide-svelte';
+	import type { FullscreenController } from '$lib/attachments/fullscreen.svelte.js';
 
-	let { ...props } = $props();
+	interface Props {
+		fullscreenController: FullscreenController;
+	}
+
+	let { fullscreenController }: Props = $props();
 </script>
 
-<button type="button" class="fullscreen-icon" aria-label="Toggle fullscreen" {...props}>
-	<span class="icon icon-enter" aria-hidden="true">
-		<Fullscreen size={20} />
-	</span>
-	<span class="icon icon-exit" aria-hidden="true">
-		<Minimize size={20} />
-	</span>
+<button
+	type="button"
+	class="fullscreen-icon"
+	class:is-fullscreen={fullscreenController.isFullscreen}
+	aria-label={fullscreenController.isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+	onclick={fullscreenController.toggle}
+>
+	{#if fullscreenController.isFullscreen}
+		<span class="icon" aria-hidden="true"><Minimize size={20} /></span>
+	{:else}
+		<span class="icon" aria-hidden="true"><Fullscreen size={20} /></span>
+	{/if}
 </button>
 
 <style>
@@ -31,17 +41,5 @@
 	button:hover {
 		color: #000;
 		background: #00ff41;
-	}
-
-	.icon-exit {
-		display: none;
-	}
-
-	button:global(.is-fullscreen) .icon-enter {
-		display: none;
-	}
-
-	button:global(.is-fullscreen) .icon-exit {
-		display: inline;
 	}
 </style>
