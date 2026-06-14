@@ -12,10 +12,10 @@ A website hosting multiple [Babylon.js](https://www.babylonjs.com/) games and ex
 
 ## Games
 
-| Game          | Route                                      | Description                                          |
-| ------------- | ------------------------------------------ | ---------------------------------------------------- |
-| Hello Babylon | [`/hello`](./src/routes/hello)             | Basic Babylon.js playground with a spinning sphere   |
-| Space Shoot 1 | [`/spaceshoot1`](./src/routes/spaceshoot1) | Top-down space shooter — WASD to move, click to fire |
+| Game          | Route                                | Description                                        |
+| ------------- | ------------------------------------ | -------------------------------------------------- |
+| Hello Babylon | [`/hello`](./src/routes/hello)       | Basic Babylon.js playground with a spinning sphere |
+| Ping Pong     | [`/pingpong`](./src/routes/pingpong) | Classic paddle game with lighting and shadows      |
 
 ## Getting Started
 
@@ -50,47 +50,47 @@ src/
 │   ├── babylon/
 │   │   ├── BabylonCanvas.svelte      # Reusable canvas/engine/scene component
 │   │   ├── canvasSize.ts             # Portrait / Landscape presets
-│   │   ├── ship.ts                   # Shared ship mesh factory
-│   │   └── spaceshoot1/              # Space Shoot 1 game logic
-│   │       ├── types.ts              # Shared interfaces (Entity, System)
-│   │       ├── game.ts               # Game orchestrator + scene setup
-│   │       ├── input.ts              # Keyboard + pointer input
-│   │       ├── movement.ts           # Movement system (pure function)
-│   │       ├── boundary.ts           # Viewport boundary clamping
-│   │       ├── bullets.ts            # Bullet factory + BulletSystem
-│   │       ├── enemies.ts            # Enemy factory + EnemySystem
-│   │       ├── collision.ts          # Collision detection + CollisionSystem
-│   │       ├── player.ts             # PlayerSystem
-│   │       └── background.ts         # BackgroundSystem (star particles)
+│   │   └── ship.ts                   # Shared ship mesh factory
 │   └── assets/
 └── routes/
     ├── +page.svelte                  # Homepage — game gallery
     ├── +layout.svelte                # Root layout
     ├── hello/
     │   └── +page.svelte              # Hello Babylon game
-    └── spaceshoot1/
-        └── +page.svelte              # Space Shoot 1 game
+    └── pingpong/                     # Ping Pong game
+        ├── +page.svelte              # Page + component assembly
+        ├── Canvas.svelte             # Engine + reactive canvas sizing
+        ├── Scene.svelte              # Scene context + render loop
+        ├── Camera.svelte             # TargetCamera setup
+        ├── HemisphereLight.svelte    # Ambient lighting
+        ├── DirectionalLight.svelte   # Directional light setup
+        ├── ShadowGenerator.svelte    # Shadow generator setup
+        ├── Ground.svelte             # Ground mesh
+        ├── Paddle.svelte             # Paddle mesh + movement
+        └── context.ts                # Engine/Scene contexts
 ```
 
 ## Architecture
 
-Games follow an **ECS-lite** pattern:
+The Ping Pong route follows a **declarative Svelte-Babylon component hierarchy**:
 
-- **Entities** are plain data objects (`mesh`, `position`, `velocity`)
-- **Systems** are classes that implement the `System` interface (`update(dt)`, `dispose()`)
-- **Game** is a thin orchestrator — it registers systems in a list and loops them each frame
+```
+Canvas
+└── Scene
+    ├── Camera
+    ├── HemisphereLight
+    ├── DirectionalLight
+    ├── ShadowGenerator
+    ├── Ground
+    └── Paddle
+```
 
-Systems are organized by domain and live in their own files:
+- `Canvas` creates the engine and reactive canvas sizing
+- `Scene` creates the scene and provides it via context
+- Each Babylon object is a focused Svelte component
+- Shared sibling state (e.g. light, shadow generator) is lifted to the parent page and passed through props / bindings
 
-| System             | Responsibility                                   |
-| ------------------ | ------------------------------------------------ |
-| `BackgroundSystem` | Scrolls star field particles                     |
-| `PlayerSystem`     | Handles ship movement, input, boundary clamping  |
-| `BulletSystem`     | Spawns bullets from any source, moves, cleans up |
-| `EnemySystem`      | Spawns enemies from top, moves, cleans up        |
-| `CollisionSystem`  | Detects bullet-enemy hits, marks both dead       |
-
-Dependencies between systems are injected via **callbacks**, not concrete types — e.g. `BulletSystem` takes `getSpawnPosition: () => Vector3` and `isFiring: () => boolean`, so it can be reused for player, enemies, or turrets without change.
+Contexts are limited to `EngineContext` and `SceneContext`. Everything else is passed explicitly for clean interfaces.
 
 ## Adding a New Game
 

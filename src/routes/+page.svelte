@@ -5,7 +5,7 @@
 		id: string;
 		title: string;
 		description: string;
-		path: '/hello' | '/spaceshoot1' | '/pingpong';
+		path: '/hello' | '/pingpong';
 	}
 
 	const games: Game[] = [
@@ -14,12 +14,6 @@
 			title: 'Hello Babylon',
 			description: 'A simple Babylon.js playground with a sphere and ground.',
 			path: '/hello'
-		},
-		{
-			id: 'spaceshoot1',
-			title: 'Space Shoot 1',
-			description: 'Top-down space shooter. Work in progress.',
-			path: '/spaceshoot1'
 		},
 		{
 			id: 'pingpong',
