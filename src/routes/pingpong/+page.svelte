@@ -27,7 +27,7 @@
 		<div class="canvas-pane">
 			<Canvas>
 				<Scene bind:scene>
-					<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} />
+					<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} interactive={debug} />
 					<HemisphereLight
 						diffuse={new Color3(0.8, 0.85, 1)}
 						groundColor={new Color3(0.2, 0.2, 0.25)}
