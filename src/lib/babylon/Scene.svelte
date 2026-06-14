@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Scene } from '@babylonjs/core/scene';
 	import type { Nullable } from '@babylonjs/core/types';
-	import { getEngineContext, setSceneContext } from './context';
+	import { getEngineContext, setSceneContext, type SceneContext } from './context';
 	import type { Snippet } from 'svelte';
 
 	interface Props {
@@ -16,7 +16,7 @@
 	}: Props = $props();
 
 	const engineCtx = getEngineContext();
-	const sceneCtx = $state<{ scene: Nullable<Scene> }>({ scene: null });
+	const sceneCtx = $state<SceneContext>({ scene: null });
 	setSceneContext(sceneCtx);
 
 	$effect(() => {
