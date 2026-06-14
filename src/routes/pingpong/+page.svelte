@@ -2,6 +2,7 @@
 	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
 	import type { Nullable } from '@babylonjs/core/types';
+	import type { Scene as BabylonScene } from '@babylonjs/core/scene';
 	import type { DirectionalLight as DirLight } from '@babylonjs/core/Lights/directionalLight';
 	import type { ShadowGenerator as ShadowGen } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import Canvas from '$lib/babylon/Canvas.svelte';
@@ -13,6 +14,7 @@
 	import Ground from './Ground.svelte';
 	import Paddle from './Paddle.svelte';
 
+	let scene = $state<Nullable<BabylonScene>>(null);
 	let light = $state<Nullable<DirLight>>(null);
 	let shadowGenerator = $state<Nullable<ShadowGen>>(null);
 </script>
@@ -20,7 +22,7 @@
 <section class="page">
 	<h1>Ping Pong</h1>
 	<Canvas>
-		<Scene>
+		<Scene bind:scene>
 			<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} />
 			<HemisphereLight
 				diffuse={new Color3(0.8, 0.85, 1)}

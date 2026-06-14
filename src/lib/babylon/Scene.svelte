@@ -5,10 +5,16 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
+		scene?: Nullable<Scene>;
 		children?: Snippet;
 	}
 
-	let { children }: Props = $props();
+	let {
+		// eslint-disable-next-line no-useless-assignment
+		scene = $bindable(null),
+		children
+	}: Props = $props();
+
 	const engineCtx = getEngineContext();
 	const sceneCtx = $state<{ scene: Nullable<Scene> }>({ scene: null });
 	setSceneContext(sceneCtx);
@@ -16,19 +22,21 @@
 	$effect(() => {
 		if (!engineCtx.engine) return;
 
-		const scene = new Scene(engineCtx.engine);
-		sceneCtx.scene = scene;
+		const newScene = new Scene(engineCtx.engine);
+		sceneCtx.scene = newScene;
+		scene = newScene;
 
 		engineCtx.engine.runRenderLoop(() => {
-			if (scene.activeCamera) {
-				scene.render();
+			if (newScene.activeCamera) {
+				newScene.render();
 			}
 		});
 
 		return () => {
 			engineCtx.engine?.stopRenderLoop();
-			scene.dispose();
+			newScene.dispose();
 			sceneCtx.scene = null;
+			scene = null;
 		};
 	});
 </script>

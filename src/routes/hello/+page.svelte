@@ -1,13 +1,17 @@
 <script lang="ts">
+	import type { Nullable } from '@babylonjs/core/types';
+	import type { Scene as BabylonScene } from '@babylonjs/core/scene';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
 	import HelloScene from './HelloScene.svelte';
+
+	let scene = $state<Nullable<BabylonScene>>(null);
 </script>
 
 <section class="page">
 	<h1>Hello Babylon</h1>
 	<Canvas>
-		<Scene>
+		<Scene bind:scene>
 			<HelloScene />
 		</Scene>
 	</Canvas>
