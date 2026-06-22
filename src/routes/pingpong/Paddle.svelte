@@ -2,6 +2,8 @@
 	import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 	import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
+	import type { Nullable } from '@babylonjs/core/types';
+	import type { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import { getSceneContext } from '$lib/babylon/context';
 	import { useMovement } from './useMovement';
 
@@ -13,6 +15,7 @@
 		startX?: number;
 		startZ?: number;
 		speed?: number;
+		shadowGenerator?: Nullable<ShadowGenerator>;
 	}
 
 	let {
@@ -22,7 +25,8 @@
 		depth = 0.25,
 		startX = 0,
 		startZ = -4,
-		speed = 6
+		speed = 6,
+		shadowGenerator
 	}: Props = $props();
 
 	const sceneCtx = getSceneContext();
@@ -38,6 +42,8 @@
 		paddle.position.x = startX;
 		paddle.position.z = startZ;
 		paddle.position.y = height / 2;
+
+		shadowGenerator?.addShadowCaster(paddle);
 
 		const detachMovement = useMovement(sceneCtx.scene, paddle, { speed });
 

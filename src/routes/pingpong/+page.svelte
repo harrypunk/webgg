@@ -4,6 +4,8 @@
 	import { Color4 } from '@babylonjs/core/Maths/math.color';
 	import type { Nullable } from '@babylonjs/core/types';
 	import type { Scene as BabylonScene } from '@babylonjs/core/scene';
+	import type { DirectionalLight as DirLight } from '@babylonjs/core/Lights/directionalLight';
+	import type { ShadowGenerator as ShadowGen } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
 	import { createFullscreen } from '$lib/attachments/fullscreen.svelte.js';
@@ -11,11 +13,15 @@
 	import FullscreenIcon from '$lib/components/FullscreenIcon.svelte';
 	import Camera from './Camera.svelte';
 	import HemisphereLight from './HemisphereLight.svelte';
+	import DirectionalLight from './DirectionalLight.svelte';
+	import ShadowGenerator from './ShadowGenerator.svelte';
 	import Ground from './Ground.svelte';
 	import Paddle from './Paddle.svelte';
 	import AxisGizmo from './AxisGizmo.svelte';
 
 	let scene = $state<Nullable<BabylonScene>>(null);
+	let light = $state<Nullable<DirLight>>(null);
+	let shadowGenerator = $state<Nullable<ShadowGen>>(null);
 	let debug = $state(false);
 	let canvasElement = $state<HTMLElement>();
 	const fullscreenController = createFullscreen(() => canvasElement);
@@ -29,12 +35,20 @@
 				<Scene bind:scene clearColor={new Color4(0.12, 0.12, 0.12, 1)}>
 					<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} interactive={debug} />
 					<HemisphereLight
-						intensity={0.8}
+						intensity={0.4}
 						diffuse={new Color3(1, 1, 1)}
 						groundColor={new Color3(0.2, 0.2, 0.2)}
 					/>
+					<DirectionalLight
+						direction={new Vector3(0, -1, 0.3)}
+						position={new Vector3(0, 10, -6)}
+						intensity={0.8}
+						diffuse={new Color3(1, 0.95, 0.85)}
+						bind:light
+					/>
+					<ShadowGenerator {light} bind:shadowGenerator />
 					<Ground />
-					<Paddle />
+					<Paddle {shadowGenerator} />
 					<AxisGizmo visible={debug} />
 				</Scene>
 				<FullscreenIcon {fullscreenController} />

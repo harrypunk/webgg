@@ -22,6 +22,7 @@
 		mat.diffuseColor = new Color3(0.5, 0.5, 0.5);
 		mat.specularColor = new Color3(0.1, 0.1, 0.1);
 		ground.material = mat;
+		ground.receiveShadows = true;
 
 		return () => {
 			ground.dispose();

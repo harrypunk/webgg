@@ -12,11 +12,11 @@ A website hosting multiple [Babylon.js](https://www.babylonjs.com/) games and ex
 
 ## Games
 
-| Game           | Route                                              | Description                                                         |
-| -------------- | -------------------------------------------------- | ------------------------------------------------------------------- |
-| Hello Babylon  | [`/hello`](./src/routes/hello)                     | Basic Babylon.js playground with a spinning sphere                  |
-| Ping Pong      | [`/pingpong`](./src/routes/pingpong)               | Simple paddle scene with a white paddle, grey floor, and debug mode |
-| Scene Switcher | [`/example/switch1`](./src/routes/example/switch1) | Cycle through cube, sphere, and cone scenes                         |
+| Game           | Route                                              | Description                                                                        |
+| -------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Hello Babylon  | [`/hello`](./src/routes/hello)                     | Basic Babylon.js playground with a spinning sphere                                 |
+| Ping Pong      | [`/pingpong`](./src/routes/pingpong)               | Simple paddle scene with a white paddle, grey floor, directional light, and shadow |
+| Scene Switcher | [`/example/switch1`](./src/routes/example/switch1) | Cycle through cube, sphere, and cone scenes                                        |
 
 ## Getting Started
 
@@ -76,6 +76,8 @@ src/
         ├── +page.svelte              # Page + component assembly
         ├── Camera.svelte             # UniversalCamera setup
         ├── HemisphereLight.svelte    # Ambient lighting
+        ├── DirectionalLight.svelte   # Directional light setup
+        ├── ShadowGenerator.svelte    # Shadow generator setup
         ├── Ground.svelte             # Grey ground mesh
         ├── Paddle.svelte             # White paddle mesh + movement
         ├── AxisGizmo.svelte          # Debug axis gizmo
@@ -91,6 +93,8 @@ Canvas
 └── Scene
     ├── Camera
     ├── HemisphereLight
+    ├── DirectionalLight
+    ├── ShadowGenerator
     ├── Ground
     ├── Paddle
     └── AxisGizmo (debug only)
