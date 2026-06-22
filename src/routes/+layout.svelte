@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import favicon from '$lib/assets/favicon.svg';
+	import '$lib/styles/app.css';
 
 	let { children } = $props();
 </script>

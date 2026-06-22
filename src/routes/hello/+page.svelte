@@ -25,26 +25,3 @@
 		<FullscreenIcon {fullscreenController} />
 	</Canvas>
 </section>
-
-<style>
-	.page {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		flex: 1;
-		min-height: 0;
-		overflow: hidden;
-	}
-
-	h1 {
-		font-size: 1.75rem;
-		color: #ffff00;
-		text-shadow: 0 0 8px #ffff00;
-	}
-
-	.controls {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-	}
-</style>

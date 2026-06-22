@@ -51,22 +51,6 @@
 </section>
 
 <style>
-	.page {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		flex: 1;
-		min-height: 0;
-		overflow: hidden;
-	}
-
-	h1 {
-		font-size: 1.75rem;
-		color: #ffff00;
-		text-shadow: 0 0 8px #ffff00;
-		margin: 0;
-	}
-
 	.canvas-layout {
 		flex: 1;
 		min-height: 0;
@@ -74,20 +58,6 @@
 		flex-direction: row;
 		gap: 1rem;
 		overflow: hidden;
-	}
-
-	.canvas-pane {
-		flex: 1;
-		min-width: 0;
-		position: relative;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.canvas-pane :global(.canvas-wrap) {
-		border: 2px solid #00ff41;
-		box-shadow: 0 0 12px #00ff41;
-		background: #000;
 	}
 
 	.side-panel {

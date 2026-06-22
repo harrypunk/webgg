@@ -12,10 +12,11 @@ A website hosting multiple [Babylon.js](https://www.babylonjs.com/) games and ex
 
 ## Games
 
-| Game          | Route                                | Description                                        |
-| ------------- | ------------------------------------ | -------------------------------------------------- |
-| Hello Babylon | [`/hello`](./src/routes/hello)       | Basic Babylon.js playground with a spinning sphere |
-| Ping Pong     | [`/pingpong`](./src/routes/pingpong) | Classic paddle game with lighting and shadows      |
+| Game           | Route                                              | Description                                                         |
+| -------------- | -------------------------------------------------- | ------------------------------------------------------------------- |
+| Hello Babylon  | [`/hello`](./src/routes/hello)                     | Basic Babylon.js playground with a spinning sphere                  |
+| Ping Pong      | [`/pingpong`](./src/routes/pingpong)               | Simple paddle scene with a white paddle, grey floor, and debug mode |
+| Scene Switcher | [`/example/switch1`](./src/routes/example/switch1) | Cycle through cube, sphere, and cone scenes                         |
 
 ## Getting Started
 
@@ -47,10 +48,17 @@ bun run dev
 ```
 src/
 ├── lib/
+│   ├── attachments/
+│   │   └── fullscreen.svelte.ts      # Fullscreen runes store
 │   ├── babylon/
 │   │   ├── Canvas.svelte             # Shared engine + reactive canvas sizing
 │   │   ├── Scene.svelte              # Shared scene context + render loop
 │   │   └── context.ts                # EngineContext + SceneContext
+│   ├── components/
+│   │   ├── FullscreenButton.svelte   # Fullscreen toggle button
+│   │   └── FullscreenIcon.svelte     # Corner fullscreen icon
+│   ├── styles/
+│   │   └── app.css                   # Shared page chrome styles
 │   └── assets/
 └── routes/
     ├── +page.svelte                  # Homepage — game gallery
@@ -58,36 +66,41 @@ src/
     ├── hello/
     │   ├── +page.svelte              # Hello Babylon page
     │   └── HelloScene.svelte         # Scene content (camera, sphere, ground)
+    ├── example/
+    │   └── switch1/
+    │       ├── +page.svelte          # Scene switcher page
+    │       ├── CubeScene.svelte      # Cube scene
+    │       ├── SphereScene.svelte    # Sphere scene
+    │       └── ConeScene.svelte      # Cone scene
     └── pingpong/                     # Ping Pong game
         ├── +page.svelte              # Page + component assembly
-        ├── Camera.svelte             # TargetCamera setup
+        ├── Camera.svelte             # UniversalCamera setup
         ├── HemisphereLight.svelte    # Ambient lighting
-        ├── DirectionalLight.svelte   # Directional light setup
-        ├── ShadowGenerator.svelte    # Shadow generator setup
-        ├── Ground.svelte             # Ground mesh
-        ├── Paddle.svelte             # Paddle mesh + movement
+        ├── Ground.svelte             # Grey ground mesh
+        ├── Paddle.svelte             # White paddle mesh + movement
+        ├── AxisGizmo.svelte          # Debug axis gizmo
         └── useMovement.ts            # Reusable keyboard movement composable
 ```
 
 ## Architecture
 
-The Ping Pong route follows a **declarative Svelte-Babylon component hierarchy**:
+Each game route follows a **declarative Svelte-Babylon component hierarchy**. The Ping Pong scene, for example, is assembled like this:
 
 ```
 Canvas
 └── Scene
     ├── Camera
     ├── HemisphereLight
-    ├── DirectionalLight
-    ├── ShadowGenerator
     ├── Ground
-    └── Paddle
+    ├── Paddle
+    └── AxisGizmo (debug only)
 ```
 
 - `Canvas` creates the engine and reactive canvas sizing
 - `Scene` creates the scene and provides it via context
 - Each Babylon object is a focused Svelte component
-- Shared sibling state (e.g. light, shadow generator) is lifted to the parent page and passed through props / bindings
+- Shared page chrome (layout, controls, canvas frame) is styled from `src/lib/styles/app.css`
+- Fullscreen state is handled by the `fullscreen.svelte.ts` runes store
 
 Contexts are limited to `EngineContext` and `SceneContext`. Everything else is passed explicitly for clean interfaces.
 
@@ -95,7 +108,7 @@ Contexts are limited to `EngineContext` and `SceneContext`. Everything else is p
 
 1. Create a new route folder under `src/routes/` (e.g., `src/routes/my-game/`)
 2. Add a `+page.svelte` with your Babylon.js scene
-3. Put shared game logic under `src/lib/babylon/my-game/`
+3. Put shared game logic under `src/lib/` or inside the route folder
 4. Register the game in `src/routes/+page.svelte` by adding to the `games` array
 
 ## License
