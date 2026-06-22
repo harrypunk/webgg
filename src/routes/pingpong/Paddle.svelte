@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
+	import type { Mesh } from '@babylonjs/core/Meshes/mesh';
 	import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
 	import type { Nullable } from '@babylonjs/core/types';
@@ -30,27 +31,38 @@
 	}: Props = $props();
 
 	const sceneCtx = getSceneContext();
+	let paddle = $state<Nullable<Mesh>>(null);
 
 	$effect(() => {
 		if (!sceneCtx.scene) return;
 
-		const paddle = MeshBuilder.CreateBox(name, { width, height, depth }, sceneCtx.scene);
+		const newPaddle = MeshBuilder.CreateBox(name, { width, height, depth }, sceneCtx.scene);
 		const mat = new StandardMaterial(`${name}Mat`, sceneCtx.scene);
 		mat.diffuseColor = new Color3(1, 1, 1);
 		mat.specularColor = new Color3(0.2, 0.2, 0.2);
-		paddle.material = mat;
-		paddle.position.x = startX;
-		paddle.position.z = startZ;
-		paddle.position.y = height / 2;
+		newPaddle.material = mat;
+		newPaddle.position.x = startX;
+		newPaddle.position.z = startZ;
+		newPaddle.position.y = height / 2;
 
-		shadowGenerator?.addShadowCaster(paddle);
-
-		const detachMovement = useMovement(sceneCtx.scene, paddle, { speed });
+		paddle = newPaddle;
+		const detachMovement = useMovement(sceneCtx.scene, newPaddle, { speed });
 
 		return () => {
 			detachMovement();
-			paddle.dispose();
+			paddle = null;
+			newPaddle.dispose();
 			mat.dispose();
+		};
+	});
+
+	$effect(() => {
+		const p = paddle;
+		const sg = shadowGenerator;
+		if (!p || !sg) return;
+		sg.addShadowCaster(p);
+		return () => {
+			sg.removeShadowCaster(p);
 		};
 	});
 </script>

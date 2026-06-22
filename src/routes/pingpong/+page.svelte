@@ -19,6 +19,15 @@
 	import Paddle from './Paddle.svelte';
 	import AxisGizmo from './AxisGizmo.svelte';
 
+	const SCENE_CLEAR_COLOR = new Color4(0.12, 0.12, 0.12, 1);
+	const CAMERA_POSITION = new Vector3(0, 8, -8);
+	const CAMERA_TARGET = new Vector3(0, 0, 0);
+	const LIGHT_DIFFUSE = new Color3(1, 1, 1);
+	const GROUND_COLOR = new Color3(0.2, 0.2, 0.2);
+	const DIRECTIONAL_DIRECTION = new Vector3(0, -1, 0.3);
+	const DIRECTIONAL_POSITION = new Vector3(0, 10, -6);
+	const DIRECTIONAL_DIFFUSE = new Color3(1, 0.95, 0.85);
+
 	let scene = $state<Nullable<BabylonScene>>(null);
 	let light = $state<Nullable<DirLight>>(null);
 	let shadowGenerator = $state<Nullable<ShadowGen>>(null);
@@ -32,18 +41,14 @@
 	<div class="canvas-layout">
 		<div class="canvas-pane">
 			<Canvas bind:element={canvasElement}>
-				<Scene bind:scene clearColor={new Color4(0.12, 0.12, 0.12, 1)}>
-					<Camera position={new Vector3(0, 8, -8)} target={Vector3.Zero()} interactive={debug} />
-					<HemisphereLight
-						intensity={0.4}
-						diffuse={new Color3(1, 1, 1)}
-						groundColor={new Color3(0.2, 0.2, 0.2)}
-					/>
+				<Scene bind:scene clearColor={SCENE_CLEAR_COLOR}>
+					<Camera position={CAMERA_POSITION} target={CAMERA_TARGET} interactive={debug} />
+					<HemisphereLight intensity={0.4} diffuse={LIGHT_DIFFUSE} groundColor={GROUND_COLOR} />
 					<DirectionalLight
-						direction={new Vector3(0, -1, 0.3)}
-						position={new Vector3(0, 10, -6)}
+						direction={DIRECTIONAL_DIRECTION}
+						position={DIRECTIONAL_POSITION}
 						intensity={0.8}
-						diffuse={new Color3(1, 0.95, 0.85)}
+						diffuse={DIRECTIONAL_DIFFUSE}
 						bind:light
 					/>
 					<ShadowGenerator {light} bind:shadowGenerator />
