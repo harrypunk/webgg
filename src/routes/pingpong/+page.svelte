@@ -17,6 +17,7 @@
 	import DirectionalLight from './DirectionalLight.svelte';
 	import ShadowGenerator from './ShadowGenerator.svelte';
 	import Ground from './Ground.svelte';
+	import Walls from './Walls.svelte';
 	import Paddle from './Paddle.svelte';
 	import AxisGizmo from './AxisGizmo.svelte';
 
@@ -54,6 +55,7 @@
 					/>
 					<ShadowGenerator {light} bind:shadowGenerator />
 					<Ground />
+					<Walls />
 					<Paddle {shadowGenerator} />
 					<AxisGizmo visible={debug} />
 				</Scene>

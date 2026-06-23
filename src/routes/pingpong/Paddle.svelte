@@ -3,6 +3,7 @@
 	import type { Mesh } from '@babylonjs/core/Meshes/mesh';
 	import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
+	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 	import type { Nullable } from '@babylonjs/core/types';
 	import type { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import { getSceneContext } from '$lib/babylon/context';
@@ -43,10 +44,15 @@
 		newPaddle.material = mat;
 		newPaddle.position.x = startX;
 		newPaddle.position.z = startZ;
-		newPaddle.position.y = height / 2;
+		newPaddle.position.y = 1.5;
+		// Match the collision volume to the paddle's actual size so it stops right at the walls.
+		newPaddle.ellipsoid = new Vector3(width / 2, height / 2, depth / 2);
 
 		paddle = newPaddle;
-		const detachMovement = useMovement(sceneCtx.scene, newPaddle, { speed });
+		const detachMovement = useMovement(sceneCtx.scene, newPaddle, {
+			speed,
+			useCollisions: true
+		});
 
 		return () => {
 			detachMovement();
