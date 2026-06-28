@@ -5,7 +5,7 @@
 		id: string;
 		title: string;
 		description: string;
-		path: '/hello' | '/pingpong' | '/example/switch1';
+		path: '/hello' | '/pingpong' | '/example/switch1' | '/example/square';
 	}
 
 	const games: Game[] = [
@@ -26,6 +26,12 @@
 			title: 'Scene Switcher',
 			description: 'Cycle through cube, sphere, and cone scenes.',
 			path: '/example/switch1'
+		},
+		{
+			id: 'square',
+			title: 'Square',
+			description: 'A simple 2D square moving left and right.',
+			path: '/example/square'
 		}
 	];
 </script>

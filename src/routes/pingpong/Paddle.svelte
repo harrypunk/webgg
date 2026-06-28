@@ -7,7 +7,7 @@
 	import type { Nullable } from '@babylonjs/core/types';
 	import type { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import { getSceneContext } from '$lib/babylon/context';
-	import { useMovement } from './useMovement';
+	import { useMovement } from '$lib/babylon/useMovement';
 
 	interface Props {
 		name?: string;
