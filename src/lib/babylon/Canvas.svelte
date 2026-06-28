@@ -60,10 +60,10 @@
 		position: relative;
 		flex: 1;
 		min-height: 0;
-		border: 2px solid #00ff41;
+		border: 2px solid var(--color-primary);
 		overflow: hidden;
-		background: #000;
-		box-shadow: 0 0 12px #00ff41;
+		background: var(--color-bg);
+		box-shadow: var(--glow-primary-lg);
 		width: 100%;
 	}
 

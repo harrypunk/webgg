@@ -52,16 +52,16 @@
 
 	.hero h1 {
 		font-size: 3.5rem;
-		color: #ffff00;
+		color: var(--color-secondary);
 		margin-bottom: 0.5rem;
-		text-shadow: 0 0 12px #ffff00;
+		text-shadow: var(--glow-secondary-lg);
 		letter-spacing: 4px;
 	}
 
 	.hero p {
 		font-size: 1.125rem;
-		color: #00d4ff;
-		text-shadow: 0 0 6px #00d4ff;
+		color: var(--color-accent);
+		text-shadow: var(--glow-accent);
 	}
 
 	.games {
@@ -74,8 +74,8 @@
 	.card {
 		display: block;
 		padding: 1.5rem;
-		background: #0a0a0a;
-		border: 2px solid #00ff41;
+		background: var(--color-surface);
+		border: 2px solid var(--color-primary);
 		text-decoration: none;
 		color: inherit;
 		transition:
@@ -84,19 +84,19 @@
 	}
 
 	.card:hover {
-		border-color: #ffff00;
-		box-shadow: 0 0 16px #ffff00;
+		border-color: var(--color-secondary);
+		box-shadow: var(--glow-secondary-lg);
 	}
 
 	.card h2 {
 		font-size: 1.25rem;
-		color: #00ff41;
+		color: var(--color-primary);
 		margin-bottom: 0.5rem;
-		text-shadow: 0 0 6px #00ff41;
+		text-shadow: var(--glow-primary-md);
 	}
 
 	.card p {
-		color: #c0c0c0;
+		color: var(--color-text);
 		font-size: 0.95rem;
 	}
 </style>

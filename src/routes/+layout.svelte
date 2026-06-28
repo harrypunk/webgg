@@ -30,8 +30,8 @@
 
 	:global(body) {
 		font-family: 'Courier New', Courier, monospace;
-		background: #000;
-		color: #c0c0c0;
+		background: var(--color-bg);
+		color: var(--color-text);
 		line-height: 1.6;
 		display: flex;
 		flex-direction: column;
@@ -40,21 +40,21 @@
 
 	header {
 		padding: 1rem 2rem;
-		border-bottom: 2px solid #00ff41;
-		background: #0a0a0a;
+		border-bottom: 2px solid var(--color-primary);
+		background: var(--color-surface);
 	}
 
 	nav a {
-		color: #ffff00;
+		color: var(--color-secondary);
 		text-decoration: none;
 		font-size: 1.5rem;
 		font-weight: 700;
-		text-shadow: 0 0 8px #ffff00;
+		text-shadow: var(--glow-secondary);
 	}
 
 	nav a:hover {
-		color: #00ff41;
-		text-shadow: 0 0 8px #00ff41;
+		color: var(--color-primary);
+		text-shadow: var(--glow-primary);
 	}
 
 	main {

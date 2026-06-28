@@ -35,15 +35,15 @@
 		font-family: inherit;
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: #00ff41;
-		background: #000;
-		border: 2px solid #00ff41;
-		box-shadow: 0 0 8px #00ff41;
+		color: var(--color-primary);
+		background: var(--color-bg);
+		border: 2px solid var(--color-primary);
+		box-shadow: var(--glow-primary);
 		cursor: pointer;
 	}
 
 	button:hover {
-		color: #000;
-		background: #00ff41;
+		color: var(--color-bg);
+		background: var(--color-primary);
 	}
 </style>

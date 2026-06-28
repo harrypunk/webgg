@@ -55,19 +55,19 @@
 		padding: 0.5rem 1rem;
 		font-size: 1rem;
 		cursor: pointer;
-		background: #00ff41;
-		color: #000;
+		background: var(--color-primary);
+		color: var(--color-bg);
 		border: none;
 		border-radius: 4px;
 	}
 
 	button:hover {
-		background: #33ff66;
+		background: var(--color-primary-hover);
 	}
 
 	.label {
 		font-size: 1.25rem;
-		color: #00ff41;
+		color: var(--color-primary);
 		min-width: 6rem;
 		text-align: center;
 	}

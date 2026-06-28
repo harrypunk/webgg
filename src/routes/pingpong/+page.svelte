@@ -87,16 +87,16 @@
 		flex-direction: column;
 		gap: 1rem;
 		padding: 1rem;
-		background: #000;
-		border: 2px solid #00ff41;
-		box-shadow: 0 0 12px #00ff41;
+		background: var(--color-bg);
+		border: 2px solid var(--color-primary);
+		box-shadow: var(--glow-primary-lg);
 		overflow-y: auto;
 	}
 
 	.side-panel h2 {
 		font-size: 1rem;
-		color: #00ff41;
-		text-shadow: 0 0 4px #00ff41;
+		color: var(--color-primary);
+		text-shadow: var(--glow-primary-sm);
 		margin: 0;
 	}
 </style>
