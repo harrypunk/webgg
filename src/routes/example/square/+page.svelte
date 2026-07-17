@@ -12,10 +12,10 @@
 	import FullscreenIcon from '$lib/components/FullscreenIcon.svelte';
 	import Grid from './Grid.svelte';
 	import Square from './Square.svelte';
+	import CameraTools from './CameraTools.svelte';
 
 	// Matches the grid's main color so the background blends seamlessly.
 	const CLEAR_COLOR = new Color4(0.16, 0.16, 0.22, 1);
-	const CAMERA_STEP = 1;
 
 	let scene = $state<Nullable<BabylonScene>>(null);
 	let canvasElement = $state<HTMLElement>();
@@ -23,6 +23,8 @@
 
 	let cameraPosition = $state(new Vector3(0, 0, -10));
 	let cameraTarget = $state(Vector3.Zero());
+
+	const CAMERA_STEP = 1;
 
 	// Pan the camera while keeping its view direction fixed: the target moves
 	// with the position. Reassigning both vectors triggers the camera's synced
@@ -49,20 +51,7 @@
 			</Scene>
 			<FullscreenIcon {fullscreenController} />
 		</Canvas>
-		<aside class="tools">
-			<h2>Tools</h2>
-			<div class="pad">
-				<button onclick={() => panCamera(0, 1)}>Up</button>
-				<div class="pad-row">
-					<button onclick={() => panCamera(-1, 0)}>Left</button>
-					<button onclick={() => panCamera(1, 0)}>Right</button>
-				</div>
-				<button onclick={() => panCamera(0, -1)}>Down</button>
-			</div>
-			<p class="readout">
-				camera: {cameraPosition.x.toFixed(1)}, {cameraPosition.y.toFixed(1)}
-			</p>
-		</aside>
+		<CameraTools position={cameraPosition} onPan={panCamera} />
 	</div>
 </section>
 
@@ -87,58 +76,5 @@
 		flex-direction: row;
 		gap: 1rem;
 		overflow: hidden;
-	}
-
-	.tools {
-		width: 180px;
-		flex-shrink: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		padding: 1rem;
-		background: var(--color-bg);
-		border: 2px solid var(--color-primary);
-		box-shadow: var(--glow-primary-lg);
-	}
-
-	.tools h2 {
-		font-size: 1rem;
-		color: var(--color-primary);
-		text-shadow: var(--glow-primary-sm);
-		margin: 0;
-	}
-
-	.pad {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.pad-row {
-		display: flex;
-		gap: 0.5rem;
-	}
-
-	.pad button {
-		padding: 0.4rem 0.8rem;
-		font-family: inherit;
-		font-size: 0.9rem;
-		cursor: pointer;
-		background: var(--color-surface);
-		color: var(--color-primary);
-		border: 1px solid var(--color-primary);
-		border-radius: 4px;
-	}
-
-	.pad button:hover {
-		background: var(--color-primary);
-		color: var(--color-bg);
-	}
-
-	.readout {
-		font-size: 0.85rem;
-		color: var(--color-text);
-		text-align: center;
 	}
 </style>

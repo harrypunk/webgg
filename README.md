@@ -73,6 +73,7 @@ src/
     ├── example/
     │   ├── square/
     │   │   ├── +page.svelte          # Square page
+    │   │   ├── CameraTools.svelte    # Camera pan debug panel
     │   │   ├── Grid.svelte           # GridMaterial background plane
     │   │   └── Square.svelte         # Keyboard-moved plane
     │   └── switch1/
