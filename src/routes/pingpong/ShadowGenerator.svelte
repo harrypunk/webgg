@@ -19,6 +19,9 @@
 
 	const sceneCtx = getSceneContext();
 
+	// Creation effect: `mapSize` is create-only (fixed at construction) and
+	// `light` is a construction dependency — changing either rebuilds the
+	// shadow generator.
 	$effect(() => {
 		if (!sceneCtx.scene || !light) return;
 

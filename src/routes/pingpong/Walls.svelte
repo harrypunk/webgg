@@ -26,6 +26,8 @@
 
 	const sceneCtx = getSceneContext();
 
+	// Creation effect only: all props are create-only (geometry is fixed at
+	// construction) — changing them rebuilds the walls.
 	$effect(() => {
 		if (!sceneCtx.scene) return;
 

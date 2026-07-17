@@ -4,7 +4,12 @@ import type { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import '@babylonjs/core/Collisions/collisionCoordinator';
 
 export interface MovementOptions {
-	speed: number;
+	/**
+	 * Movement speed in units per second. Pass a getter (e.g. `() => speed`)
+	 * to keep the value live: it is then read every frame, so prop updates
+	 * apply immediately without recreating anything.
+	 */
+	speed: number | (() => number);
 	leftKey?: string;
 	rightKey?: string;
 	useCollisions?: boolean;
@@ -50,7 +55,8 @@ export function useMovement(
 		const direction = (input.right ? 1 : 0) - (input.left ? 1 : 0);
 		if (direction === 0) return;
 
-		const distance = direction * speed * dt;
+		const currentSpeed = typeof speed === 'function' ? speed() : speed;
+		const distance = direction * currentSpeed * dt;
 		if (useCollisions) {
 			mesh.moveWithCollisions(new Vector3(distance, 0, 0));
 		} else {

@@ -34,6 +34,9 @@
 	const sceneCtx = getSceneContext();
 	let paddle = $state<Nullable<Mesh>>(null);
 
+	// Creation effect: `name`, dimensions and start position are create-only —
+	// changing them rebuilds the mesh. `speed` is passed as a getter so it is
+	// read live every frame instead of being tracked by this effect.
 	$effect(() => {
 		if (!sceneCtx.scene) return;
 
@@ -50,7 +53,7 @@
 
 		paddle = newPaddle;
 		const detachMovement = useMovement(sceneCtx.scene, newPaddle, {
-			speed,
+			speed: () => speed,
 			useCollisions: true
 		});
 
@@ -62,6 +65,8 @@
 		};
 	});
 
+	// Synced subscription: keep the shadow generator's caster list in sync with
+	// the paddle and generator instances, with cleanup on change or teardown.
 	$effect(() => {
 		const p = paddle;
 		const sg = shadowGenerator;

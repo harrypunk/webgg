@@ -41,10 +41,11 @@
 	let { visible = true, size = 0.4, distance = 4 }: Props = $props();
 
 	const sceneCtx = getSceneContext();
-	// Plain (non-reactive) reference to the built gizmo node. We do not use $state
-	// because assigning it must not re-trigger the creation effect.
-	let gizmoNode: Nullable<TransformNode> = null;
-	let labelRoot: Nullable<AdvancedDynamicTexture> = null;
+	// Reactive handles so the sync effect below re-applies `visible` whenever the
+	// gizmo is (re)created. Safe because the creation effect reads only contexts
+	// and create-only props, so assigning these never re-triggers it.
+	let gizmoNode = $state<Nullable<TransformNode>>(null);
+	let labelRoot = $state<Nullable<AdvancedDynamicTexture>>(null);
 
 	const AXES = [
 		{ dir: new Vector3(1, 0, 0), color: new Color3(1, 0, 0), name: 'X' },
@@ -138,8 +139,9 @@
 		return adt;
 	}
 
-	// Effect 1: create the gizmo once the Babylon scene exists, and keep its
-	// screen-corner position updated every frame. It depends only on the scene.
+	// Creation effect: reads only the scene and the create-only `size` prop —
+	// changing `size` rebuilds the gizmo. `distance` is read per frame inside
+	// the render observer, so it stays live without triggering this effect.
 	$effect(() => {
 		if (!sceneCtx.scene) return;
 
@@ -148,13 +150,6 @@
 		const utilityLayer = new UtilityLayerRenderer(scene);
 		const { node, anchors } = buildGizmo(utilityLayer.utilityLayerScene);
 		const labels = buildLabels(scene, anchors);
-
-		// Set the initial enabled state from the current `visible` prop without
-		// subscribing this effect to future `visible` changes. Toggling visibility
-		// is handled by the second effect so we do not rebuild the gizmo each time.
-		const initialVisible = untrack(() => visible);
-		node.setEnabled(initialVisible);
-		labels.rootContainer.isVisible = initialVisible;
 		gizmoNode = node;
 		labelRoot = labels;
 
@@ -198,7 +193,9 @@
 			node.rotation = Vector3.Zero();
 		};
 
-		update();
+		// Position once immediately; `untrack` keeps the per-frame `distance`
+		// read inside `update` from being tracked by this effect.
+		untrack(update);
 		const obs = scene.onBeforeRenderObservable.add(update);
 
 		return () => {
@@ -210,8 +207,8 @@
 		};
 	});
 
-	// Effect 2: react only to `visible` changes and toggle the existing gizmo.
-	// Separated from effect 1 to avoid destroying/recreating the node on toggle.
+	// Synced prop: toggle visibility on the existing gizmo — no rebuild.
+	// Runs after (re)creation because it reads the reactive handles above.
 	$effect(() => {
 		gizmoNode?.setEnabled(visible);
 		if (labelRoot) {

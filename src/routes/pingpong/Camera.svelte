@@ -25,13 +25,12 @@
 	// when a new camera is created (e.g. on scene change).
 	let camera = $state<Nullable<UniversalCamera>>(null);
 
-	// Effect 1: create the camera once the scene exists. It does not attach
-	// controls because that is handled reactively by effect 2.
+	// Creation effect: reads only contexts and the create-only `name` prop —
+	// changing `name` rebuilds the camera.
 	$effect(() => {
 		if (!sceneCtx.scene) return;
 
-		const cam = new UniversalCamera(name, position.clone(), sceneCtx.scene);
-		cam.setTarget(target.clone());
+		const cam = new UniversalCamera(name, Vector3.Zero(), sceneCtx.scene);
 		camera = cam;
 
 		return () => {
@@ -41,8 +40,15 @@
 		};
 	});
 
-	// Effect 2: attach/detach input controls based on the interactive prop.
-	// When interactivity is disabled, snap the camera back to its initial angle.
+	// Synced props: place the live camera in place — no rebuild.
+	$effect(() => {
+		if (!camera) return;
+		camera.position.copyFrom(position);
+		camera.setTarget(target.clone());
+	});
+
+	// Synced prop: attach/detach input controls based on the interactive prop.
+	// When interactivity is disabled, snap the camera back to the prop pose.
 	$effect(() => {
 		if (!camera || !engineCtx.canvas) return;
 
@@ -50,7 +56,7 @@
 			camera.attachControl(engineCtx.canvas, true);
 		} else {
 			camera.detachControl();
-			camera.position = position.clone();
+			camera.position.copyFrom(position);
 			camera.setTarget(target.clone());
 		}
 	});

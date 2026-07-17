@@ -2,6 +2,7 @@
 	import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 	import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
+	import type { Nullable } from '@babylonjs/core/types';
 	import { getSceneContext } from '$lib/babylon/context';
 	import { useMovement } from '$lib/babylon/useMovement';
 
@@ -22,24 +23,35 @@
 	}: Props = $props();
 
 	const sceneCtx = getSceneContext();
+	let mat = $state<Nullable<StandardMaterial>>(null);
 
+	// Creation effect: `name`, `size` and `y` are create-only — changing them
+	// rebuilds the mesh. `speed` is passed as a getter so it is read live every
+	// frame instead of being tracked by this effect.
 	$effect(() => {
 		if (!sceneCtx.scene) return;
 
 		const square = MeshBuilder.CreatePlane(name, { size }, sceneCtx.scene);
 		square.position.y = y;
 
-		const mat = new StandardMaterial(`${name}Mat`, sceneCtx.scene);
-		mat.diffuseColor = color;
-		mat.disableLighting = true;
-		square.material = mat;
+		const material = new StandardMaterial(`${name}Mat`, sceneCtx.scene);
+		material.disableLighting = true;
+		square.material = material;
+		mat = material;
 
-		const detachMovement = useMovement(sceneCtx.scene, square, { speed });
+		const detachMovement = useMovement(sceneCtx.scene, square, { speed: () => speed });
 
 		return () => {
 			detachMovement();
+			mat = null;
 			square.dispose();
-			mat.dispose();
+			material.dispose();
 		};
+	});
+
+	// Synced prop: recolor the live material in place — no rebuild.
+	$effect(() => {
+		if (!mat) return;
+		mat.diffuseColor = color;
 	});
 </script>

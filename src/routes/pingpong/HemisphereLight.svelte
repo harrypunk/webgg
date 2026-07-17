@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { HemisphericLight } from '@babylonjs/core/Lights/hemisphericLight';
+	import type { Nullable } from '@babylonjs/core/types';
 	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
 	import { getSceneContext } from '$lib/babylon/context';
@@ -21,17 +22,28 @@
 	}: Props = $props();
 
 	const sceneCtx = getSceneContext();
+	let light = $state<Nullable<HemisphericLight>>(null);
 
+	// Creation effect: reads only the scene context and the create-only `name`
+	// prop — changing `name` rebuilds the light.
 	$effect(() => {
 		if (!sceneCtx.scene) return;
 
-		const light = new HemisphericLight(name, direction, sceneCtx.scene);
+		const l = new HemisphericLight(name, Vector3.Up(), sceneCtx.scene);
+		light = l;
+
+		return () => {
+			light = null;
+			l.dispose();
+		};
+	});
+
+	// Synced props: mutate the live light in place — no rebuild.
+	$effect(() => {
+		if (!light) return;
+		light.direction.copyFrom(direction);
 		light.intensity = intensity;
 		light.diffuse = diffuse;
 		light.groundColor = groundColor;
-
-		return () => {
-			light.dispose();
-		};
 	});
 </script>

@@ -22,13 +22,12 @@
 	const sceneCtx = $state<SceneContext>({ scene: null });
 	setSceneContext(sceneCtx);
 
+	// Creation effect: reads only the engine context — no props — so a prop
+	// change can never trigger a scene rebuild.
 	$effect(() => {
 		if (!engineCtx.engine) return;
 
 		const newScene = new Scene(engineCtx.engine);
-		if (clearColor) {
-			newScene.clearColor = clearColor;
-		}
 		sceneCtx.scene = newScene;
 		scene = newScene;
 
@@ -44,6 +43,12 @@
 			sceneCtx.scene = null;
 			scene = null;
 		};
+	});
+
+	// Synced prop: mutate the live scene in place — no rebuild.
+	$effect(() => {
+		if (!sceneCtx.scene || !clearColor) return;
+		sceneCtx.scene.clearColor = clearColor;
 	});
 </script>
 

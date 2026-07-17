@@ -14,6 +14,8 @@
 
 	const sceneCtx = getSceneContext();
 
+	// Creation effect only: `name`, `width` and `height` are create-only
+	// (geometry is fixed at construction) — changing them rebuilds the mesh.
 	$effect(() => {
 		if (!sceneCtx.scene) return;
 
