@@ -8,9 +8,11 @@
 	import { createFullscreen } from '$lib/attachments/fullscreen.svelte.js';
 	import FullscreenButton from '$lib/components/FullscreenButton.svelte';
 	import FullscreenIcon from '$lib/components/FullscreenIcon.svelte';
+	import Grid from './Grid.svelte';
 	import Square from './Square.svelte';
 
-	const CLEAR_COLOR = new Color4(0.5, 0.5, 0.5, 1);
+	// Matches the grid's main color so the background blends seamlessly.
+	const CLEAR_COLOR = new Color4(0.08, 0.08, 0.12, 1);
 
 	let scene = $state<Nullable<BabylonScene>>(null);
 	let canvasElement = $state<HTMLElement>();
@@ -26,6 +28,7 @@
 	<Canvas bind:element={canvasElement}>
 		<Scene bind:scene clearColor={CLEAR_COLOR}>
 			<OrthographicCamera worldHeight={10} />
+			<Grid />
 			<Square />
 		</Scene>
 		<FullscreenIcon {fullscreenController} />

@@ -72,6 +72,7 @@ src/
     ├── example/
     │   ├── square/
     │   │   ├── +page.svelte          # Square page
+    │   │   ├── Grid.svelte           # GridMaterial background plane
     │   │   └── Square.svelte         # Keyboard-moved plane
     │   └── switch1/
     │       ├── +page.svelte          # Scene switcher page
