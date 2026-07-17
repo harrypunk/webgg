@@ -3,6 +3,7 @@
 	import { Camera } from '@babylonjs/core/Cameras/camera';
 	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 	import type { Nullable } from '@babylonjs/core/types';
+	import { untrack } from 'svelte';
 	import { getSceneContext } from '$lib/babylon/context';
 
 	interface Props {
@@ -22,16 +23,6 @@
 	const sceneCtx = getSceneContext();
 	let camera = $state<Nullable<UniversalCamera>>(null);
 
-	function updateBounds() {
-		if (!camera) return;
-		const engine = camera.getEngine();
-		const aspect = engine.getRenderWidth() / engine.getRenderHeight();
-		camera.orthoTop = worldHeight / 2;
-		camera.orthoBottom = -worldHeight / 2;
-		camera.orthoLeft = (-worldHeight / 2) * aspect;
-		camera.orthoRight = (worldHeight / 2) * aspect;
-	}
-
 	// Creation effect: reads only the scene context and the create-only `name`
 	// prop — changing `name` rebuilds the camera.
 	$effect(() => {
@@ -42,11 +33,29 @@
 		cam.mode = Camera.ORTHOGRAPHIC_CAMERA;
 		camera = cam;
 
-		const engine = scene.getEngine();
-		const resizeObserver = engine.onResizeObservable.add(updateBounds);
+		// Derive the ortho frustum from the live viewport every frame: the view
+		// always shows exactly `worldHeight` world units vertically and whatever
+		// fits horizontally. Unlike perspective cameras, Babylon does not
+		// auto-adapt ortho bounds to the render size, so something must map
+		// viewport → frustum. Doing it per frame keeps the camera correct on
+		// window resize, fullscreen and zoom with no resize-event wiring.
+		// Babylon skips the projection recompute when the derived values have
+		// not changed, so unchanged frames are free.
+		const updateBounds = () => {
+			const engine = scene.getEngine();
+			const aspect = engine.getRenderWidth() / engine.getRenderHeight();
+			cam.orthoTop = worldHeight / 2;
+			cam.orthoBottom = -worldHeight / 2;
+			cam.orthoLeft = (-worldHeight / 2) * aspect;
+			cam.orthoRight = (worldHeight / 2) * aspect;
+		};
+		// Apply once immediately; `untrack` keeps the per-frame `worldHeight`
+		// read inside `updateBounds` from being tracked by this effect.
+		untrack(updateBounds);
+		const boundsObserver = scene.onBeforeRenderObservable.add(updateBounds);
 
 		return () => {
-			engine.onResizeObservable.remove(resizeObserver);
+			scene.onBeforeRenderObservable.remove(boundsObserver);
 			camera = null;
 			cam.dispose();
 		};
@@ -57,10 +66,5 @@
 		if (!camera) return;
 		camera.position.copyFrom(position);
 		camera.setTarget(target.clone());
-	});
-
-	// Synced prop: recompute orthographic bounds when `worldHeight` changes.
-	$effect(() => {
-		updateBounds();
 	});
 </script>

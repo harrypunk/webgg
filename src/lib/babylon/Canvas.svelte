@@ -37,15 +37,17 @@
 	});
 
 	/**
-	 * Sync pixel buffer and notify Babylon whenever the CSS box size changes.
-	 * `bind:clientWidth` / `bind:clientHeight` feed these reactively.
+	 * Notify Babylon whenever the CSS box size changes so it resizes the pixel
+	 * buffer and fires `engine.onResizeObservable`. `bind:clientWidth` /
+	 * `bind:clientHeight` feed these reactively. Babylon owns the buffer size:
+	 * setting `canvas.width` manually here would pre-empt its change detection
+	 * in `setSize` and swallow the resize notification.
 	 */
 	$effect(() => {
 		if (!canvasRef) return;
 		if (!engineCtx.engine) return;
+		if (!width || !height) return;
 
-		canvasRef.width = width;
-		canvasRef.height = height;
 		engineCtx.engine.resize();
 	});
 </script>

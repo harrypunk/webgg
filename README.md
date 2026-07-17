@@ -55,6 +55,7 @@ src/
 │   │   ├── Canvas.svelte             # Shared engine + reactive canvas sizing
 │   │   ├── Scene.svelte              # Shared scene context + render loop
 │   │   ├── OrthographicCamera.svelte # Shared orthographic camera
+│   │   ├── HemisphereLight.svelte    # Shared ambient lighting
 │   │   ├── context.ts                # EngineContext + SceneContext
 │   │   └── useMovement.ts            # Reusable keyboard movement composable
 │   ├── components/
@@ -83,7 +84,6 @@ src/
     └── pingpong/                     # Ping Pong game
         ├── +page.svelte              # Page + component assembly
         ├── Camera.svelte             # UniversalCamera setup
-        ├── HemisphereLight.svelte    # Ambient lighting
         ├── DirectionalLight.svelte   # Directional light setup
         ├── ShadowGenerator.svelte    # Shadow generator setup
         ├── Ground.svelte             # Grey ground mesh
@@ -127,7 +127,7 @@ Babylon objects are imperative and mutable, so every wrapper component follows a
 | ------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
 | **Synced props**         | `intensity`, `diffuse`, `position`, `visible`, `interactive` | A dedicated `$effect` mutates the live Babylon object in place. No rebuild.                                   |
 | **Create-only props**    | `name`, geometry sizes, `mapSize`, the `mesh` factory        | Read only inside the creation effect, so changing them disposes and recreates the object (same as `{#key}`).  |
-| **Live per-frame props** | `speed`, `distance`, rotation speeds                         | Read every frame inside `onBeforeRenderObservable` callbacks. Always current, never tracked, never a rebuild. |
+| **Live per-frame props** | `speed`, `distance`, `worldHeight`, rotation speeds          | Read every frame inside `onBeforeRenderObservable` callbacks. Always current, never tracked, never a rebuild. |
 
 The rules that keep this consistent:
 

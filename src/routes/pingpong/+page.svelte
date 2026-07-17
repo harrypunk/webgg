@@ -13,7 +13,7 @@
 	import FullscreenIcon from '$lib/components/FullscreenIcon.svelte';
 	import DebugButton from './DebugButton.svelte';
 	import Camera from './Camera.svelte';
-	import HemisphereLight from './HemisphereLight.svelte';
+	import HemisphereLight from '$lib/babylon/HemisphereLight.svelte';
 	import DirectionalLight from './DirectionalLight.svelte';
 	import ShadowGenerator from './ShadowGenerator.svelte';
 	import Ground from './Ground.svelte';

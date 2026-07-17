@@ -17,7 +17,7 @@
 	let {
 		name = 'square',
 		size = 1,
-		color = new Color3(0, 1, 0.25),
+		color = new Color3(1, 0, 1),
 		speed = 6,
 		y = -3
 	}: Props = $props();
@@ -50,8 +50,10 @@
 	});
 
 	// Synced prop: recolor the live material in place — no rebuild.
+	// Emissive matches diffuse so the square stays vivid regardless of lighting.
 	$effect(() => {
 		if (!mat) return;
 		mat.diffuseColor = color;
+		mat.emissiveColor = color;
 	});
 </script>

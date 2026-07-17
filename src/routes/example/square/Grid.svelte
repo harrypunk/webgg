@@ -15,11 +15,11 @@
 
 	let {
 		name = 'grid',
-		size = 100,
+		size = 500,
 		cellSize = 1,
 		majorEvery = 5,
-		mainColor = new Color3(0.08, 0.08, 0.12),
-		lineColor = new Color3(0.4, 0.4, 0.55)
+		mainColor = new Color3(0.16, 0.16, 0.22),
+		lineColor = new Color3(0.55, 0.6, 0.75)
 	}: Props = $props();
 
 	const sceneCtx = getSceneContext();
