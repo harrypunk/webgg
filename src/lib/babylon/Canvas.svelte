@@ -70,6 +70,13 @@
 	}
 
 	canvas {
+		/* Fill the wrapper via absolute positioning: in-flow percentage heights
+		 * don't resolve against flex-resolved parents, which let the canvas fall
+		 * back to its intrinsic buffer ratio and left the wrapper's background
+		 * exposed below it. Absolute positioning resolves against the wrapper's
+		 * used size instead. */
+		position: absolute;
+		inset: 0;
 		display: block;
 		width: 100%;
 		height: 100%;
