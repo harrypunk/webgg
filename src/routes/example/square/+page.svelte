@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 	import { Color4 } from '@babylonjs/core/Maths/math.color';
 	import type { Nullable } from '@babylonjs/core/types';
 	import type { Scene as BabylonScene } from '@babylonjs/core/scene';
@@ -7,7 +6,9 @@
 	import Scene from '$lib/babylon/Scene.svelte';
 	import OrthographicCamera from '$lib/babylon/OrthographicCamera.svelte';
 	import HemisphereLight from '$lib/babylon/HemisphereLight.svelte';
+	import { PannedCamera } from '$lib/babylon/pannedCamera.svelte.js';
 	import { createFullscreen } from '$lib/attachments/fullscreen.svelte.js';
+	import { createMiddleMousePan } from '$lib/attachments/middleMousePan.svelte.js';
 	import FullscreenButton from '$lib/components/FullscreenButton.svelte';
 	import FullscreenIcon from '$lib/components/FullscreenIcon.svelte';
 	import Grid from './Grid.svelte';
@@ -16,42 +17,37 @@
 
 	// Matches the grid's main color so the background blends seamlessly.
 	const CLEAR_COLOR = new Color4(0.16, 0.16, 0.22, 1);
+	const WORLD_HEIGHT = 10;
 
 	let scene = $state<Nullable<BabylonScene>>(null);
 	let canvasElement = $state<HTMLElement>();
 	const fullscreenController = createFullscreen(() => canvasElement);
 
-	let cameraPosition = $state(new Vector3(0, 0, -10));
-	let cameraTarget = $state(Vector3.Zero());
-
-	const CAMERA_STEP = 1;
-
-	// Pan the camera while keeping its view direction fixed: the target moves
-	// with the position. Reassigning both vectors triggers the camera's synced
-	// props, so each click exercises the prop → camera pipeline.
-	function panCamera(dx: number, dy: number) {
-		cameraPosition = cameraPosition.add(new Vector3(dx * CAMERA_STEP, dy * CAMERA_STEP, 0));
-		cameraTarget = cameraPosition.add(new Vector3(0, 0, 10));
-	}
+	const camera = new PannedCamera(WORLD_HEIGHT, () => scene?.getEngine().getRenderHeight() ?? 0);
+	createMiddleMousePan(() => canvasElement, camera.panPixels);
 </script>
 
 <section class="page">
 	<h1>Square</h1>
 	<div class="controls">
-		<span class="hint">Move with <kbd>A</kbd> / <kbd>D</kbd></span>
+		<span class="hint">Move with <kbd>A</kbd> / <kbd>D</kbd> · Pan: middle-mouse drag</span>
 		<FullscreenButton {fullscreenController} />
 	</div>
 	<div class="canvas-layout">
 		<Canvas bind:element={canvasElement}>
 			<Scene bind:scene clearColor={CLEAR_COLOR}>
-				<OrthographicCamera position={cameraPosition} target={cameraTarget} worldHeight={10} />
+				<OrthographicCamera
+					position={camera.position}
+					target={camera.target}
+					worldHeight={WORLD_HEIGHT}
+				/>
 				<HemisphereLight intensity={0.9} />
 				<Grid />
 				<Square />
 			</Scene>
 			<FullscreenIcon {fullscreenController} />
 		</Canvas>
-		<CameraTools position={cameraPosition} onPan={panCamera} />
+		<CameraTools position={camera.position} onPan={camera.pan} />
 	</div>
 </section>
 

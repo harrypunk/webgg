@@ -50,13 +50,15 @@ bun run dev
 src/
 ├── lib/
 │   ├── attachments/
-│   │   └── fullscreen.svelte.ts      # Fullscreen runes store
+│   │   ├── fullscreen.svelte.ts      # Fullscreen runes store
+│   │   └── middleMousePan.svelte.ts  # Middle-mouse drag input
 │   ├── babylon/
 │   │   ├── Canvas.svelte             # Shared engine + reactive canvas sizing
 │   │   ├── Scene.svelte              # Shared scene context + render loop
 │   │   ├── OrthographicCamera.svelte # Shared orthographic camera
 │   │   ├── HemisphereLight.svelte    # Shared ambient lighting
 │   │   ├── context.ts                # EngineContext + SceneContext
+│   │   ├── pannedCamera.svelte.ts    # PannedCamera class — pannable camera pose
 │   │   └── useMovement.ts            # Reusable keyboard movement composable
 │   ├── components/
 │   │   ├── FullscreenButton.svelte   # Fullscreen toggle button
