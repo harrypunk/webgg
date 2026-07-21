@@ -1,11 +1,14 @@
 :root {
-	--color-bg: #000;
-	--color-surface: #0a0a0a;
-	--color-text: #c0c0c0;
+	/* Deep space navy — must stay visibly distinct from default-black elements. */
+	--color-bg: #0b0e17;
+	/* Lifted, blue-tinted panel background. */
+	--color-surface: #141a2a;
+	/* Soft cool white for body text. */
+	--color-text: #cfd6e4;
 
 	--color-primary: #00ff41;
-	--color-primary-hover: #33ff66;
-	--color-secondary: #ffff00;
+	--color-primary-hover: #4dff7c;
+	--color-secondary: #ffd60a;
 	--color-accent: #00d4ff;
 
 	--glow-primary-sm: 0 0 4px var(--color-primary);

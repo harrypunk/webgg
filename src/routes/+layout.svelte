@@ -30,7 +30,14 @@
 
 	:global(body) {
 		font-family: 'Courier New', Courier, monospace;
-		background: var(--color-bg);
+		/* Retro CRT backdrop: faint neon haze in opposite corners and subtle
+		 * scanlines over the base color. Fixed so it stays put while scrolling. */
+		background:
+			radial-gradient(1100px 520px at 85% -5%, rgba(0, 212, 255, 0.07), transparent 60%),
+			radial-gradient(900px 520px at 8% 105%, rgba(0, 255, 65, 0.06), transparent 60%),
+			repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 3px),
+			var(--color-bg);
+		background-attachment: fixed;
 		color: var(--color-text);
 		line-height: 1.6;
 		display: flex;
