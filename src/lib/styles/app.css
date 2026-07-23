@@ -1,15 +1,17 @@
-:root {
-	/* Deep space navy — must stay visibly distinct from default-black elements. */
-	--color-bg: #0b0e17;
-	/* Lifted, blue-tinted panel background. */
-	--color-surface: #141a2a;
-	/* Soft cool white for body text. */
-	--color-text: #cfd6e4;
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&display=swap');
 
-	--color-primary: #00ff41;
-	--color-primary-hover: #4dff7c;
-	--color-secondary: #ffd60a;
-	--color-accent: #00d4ff;
+:root {
+	/* Deep phosphor green-charcoal — must stay visibly distinct from default-black elements. */
+	--color-bg: #06110c;
+	/* Lifted bezel-green panel background. */
+	--color-surface: #0b1f16;
+	/* Soft phosphor green for body text. */
+	--color-text: #a9d9bd;
+
+	--color-primary: #27ff9c;
+	--color-primary-hover: #5cffb3;
+	--color-secondary: #ffb000;
+	--color-accent: #21e6ff;
 
 	--glow-primary-sm: 0 0 4px var(--color-primary);
 	--glow-primary: 0 0 8px var(--color-primary);
@@ -19,6 +21,26 @@
 	--glow-secondary: 0 0 8px var(--color-secondary);
 	--glow-secondary-lg: 0 0 12px var(--color-secondary);
 	--glow-accent: 0 0 6px var(--color-accent);
+
+	/* Stacking model: page content < CRT overlay < exempt surfaces.
+	 * Exempt an element from the CRT effect with
+	 * `position: relative; z-index: var(--z-crt-exempt)` — but note this only
+	 * works while no ancestor creates a stacking context (transform, filter,
+	 * will-change), which would trap the element below the overlay. */
+	--z-crt-scanlines: 9998;
+	--z-crt-vignette: 9999;
+	--z-crt-exempt: 10000;
+}
+
+::selection {
+	background: var(--color-primary);
+	color: #02110a;
+}
+
+h1,
+nav a {
+	font-family: 'Orbitron', 'Share Tech Mono', monospace;
+	letter-spacing: 0.08em;
 }
 
 .page {
@@ -54,4 +76,58 @@
 	border: 2px solid var(--color-primary);
 	box-shadow: var(--glow-primary-lg);
 	background: var(--color-bg);
+}
+
+/* CRT overlay adapted from the codefronts.com "retro-futuristic terminal" demo
+ * (https://codefronts.com/try/?c=css-retro-designs&d=retro-futuristic-terminal-ui-code).
+ * Rolling scanlines + flicker on body::before, vignette on body::after, both
+ * fixed and pointer-events:none so they never affect layout or input. They
+ * also disappear in fullscreen, since pseudo-elements stay out of the
+ * fullscreen top layer. */
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: var(--z-crt-scanlines);
+	background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 0, 0, 0.28) 2px 4px);
+	mix-blend-mode: multiply;
+	animation:
+		crt-roll 8s linear infinite,
+		crt-flicker 5s infinite;
+}
+
+body::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: var(--z-crt-vignette);
+	background: radial-gradient(120% 120% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+@keyframes crt-roll {
+	to {
+		background-position: 0 200px;
+	}
+}
+
+@keyframes crt-flicker {
+	0%,
+	96%,
+	100% {
+		opacity: 1;
+	}
+	97% {
+		opacity: 0.78;
+	}
+	98% {
+		opacity: 0.92;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body::before {
+		animation: none;
+	}
 }

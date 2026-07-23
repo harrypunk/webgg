@@ -29,14 +29,9 @@
 	}
 
 	:global(body) {
-		font-family: 'Courier New', Courier, monospace;
-		/* Retro CRT backdrop: faint neon haze in opposite corners and subtle
-		 * scanlines over the base color. Fixed so it stays put while scrolling. */
-		background:
-			radial-gradient(1100px 520px at 85% -5%, rgba(0, 212, 255, 0.07), transparent 60%),
-			radial-gradient(900px 520px at 8% 105%, rgba(0, 255, 65, 0.06), transparent 60%),
-			repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 3px),
-			var(--color-bg);
+		font-family: 'Share Tech Mono', 'Courier New', monospace;
+		/* Phosphor-terminal backdrop: soft green glow from the top over the base color. */
+		background: radial-gradient(120% 120% at 50% 0%, #0a1c12 0%, var(--color-bg) 70%);
 		background-attachment: fixed;
 		color: var(--color-text);
 		line-height: 1.6;
@@ -46,6 +41,9 @@
 	}
 
 	header {
+		position: relative;
+		/* Keep the navbar above the CRT overlay, like the game canvas. */
+		z-index: var(--z-crt-exempt);
 		padding: 1rem 2rem;
 		border-bottom: 2px solid var(--color-primary);
 		background: var(--color-surface);
