@@ -1,14 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 
-	interface Game {
-		id: string;
-		title: string;
-		description: string;
-		path: '/hello' | '/pingpong' | '/example/switch1' | '/example/square';
-	}
-
-	const games: Game[] = [
+	// `as const` keeps the paths as route literals so `resolve()` accepts them.
+	const games = [
 		{
 			id: 'hello',
 			title: 'Hello Babylon',
@@ -22,6 +16,12 @@
 			path: '/pingpong'
 		},
 		{
+			id: 'farmdungeon',
+			title: 'Farm Dungeon',
+			description: 'A sunny grassland with a cube hero. Work in progress.',
+			path: '/farmdungeon'
+		},
+		{
 			id: 'switch1',
 			title: 'Scene Switcher',
 			description: 'Cycle through cube, sphere, and cone scenes.',
@@ -33,7 +33,7 @@
 			description: 'A simple 2D square moving left and right.',
 			path: '/example/square'
 		}
-	];
+	] as const;
 </script>
 
 <section class="hero">
