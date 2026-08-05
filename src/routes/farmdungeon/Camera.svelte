@@ -2,6 +2,7 @@
 	import { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 	import type { Nullable } from '@babylonjs/core/types';
+	import type { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 	import { getEngineContext, getSceneContext } from '$lib/babylon/context';
 
 	interface Props {
@@ -10,6 +11,9 @@
 		beta?: number;
 		radius?: number;
 		target?: Vector3;
+		/** When set, the camera keeps this mesh centered as it moves. */
+		follow?: Nullable<AbstractMesh>;
+		camera?: Nullable<ArcRotateCamera>;
 	}
 
 	let {
@@ -17,12 +21,13 @@
 		alpha = -Math.PI / 2,
 		beta = Math.PI / 3.5,
 		radius = 14,
-		target = Vector3.Zero()
+		target = Vector3.Zero(),
+		follow = null,
+		camera = $bindable(null)
 	}: Props = $props();
 
 	const sceneCtx = getSceneContext();
 	const engineCtx = getEngineContext();
-	let camera = $state<Nullable<ArcRotateCamera>>(null);
 
 	// Creation effect: reads only contexts and the create-only `name` prop —
 	// changing `name` rebuilds the camera.
@@ -46,13 +51,29 @@
 		};
 	});
 
-	// Synced props: mutate the live camera in place — no rebuild.
+	// Synced props: mutate the live camera in place — no rebuild. While
+	// following a mesh, the per-frame observer below owns the target.
 	$effect(() => {
 		if (!camera) return;
 		camera.alpha = alpha;
 		camera.beta = beta;
 		camera.radius = radius;
-		camera.target = target;
+		if (!follow) camera.target = target;
+	});
+
+	// Follow subscription: re-center the orbit target on the followed mesh
+	// every frame (aimed at its torso), with cleanup on change or teardown.
+	$effect(() => {
+		const scene = sceneCtx.scene;
+		const cam = camera;
+		const mesh = follow;
+		if (!cam || !scene || !mesh) return;
+		const observer = scene.onBeforeRenderObservable.add(() => {
+			cam.target.set(mesh.position.x, mesh.position.y + 0.5, mesh.position.z);
+		});
+		return () => {
+			scene.onBeforeRenderObservable.remove(observer);
+		};
 	});
 
 	// Attach orbit controls once camera and canvas are both available.

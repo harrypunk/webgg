@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 	import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
+	import type { Nullable } from '@babylonjs/core/types';
+	import type { Mesh } from '@babylonjs/core/Meshes/mesh';
+	import type { ArcRotateCamera } from '@babylonjs/core/Cameras/arcRotateCamera';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
 	import HemisphereLight from '$lib/babylon/HemisphereLight.svelte';
@@ -14,6 +17,9 @@
 	const SKY_DIFFUSE = new Color3(0.9, 0.95, 1);
 	// Green bounce light coming back up from the grass.
 	const GROUND_BOUNCE = new Color3(0.3, 0.4, 0.2);
+
+	let character = $state<Nullable<Mesh>>(null);
+	let camera = $state<Nullable<ArcRotateCamera>>(null);
 </script>
 
 <section class="page">
@@ -21,10 +27,10 @@
 	<div class="canvas-pane">
 		<Canvas>
 			<Scene clearColor={SCENE_CLEAR_COLOR}>
-				<Camera target={CAMERA_TARGET} />
+				<Camera target={CAMERA_TARGET} follow={character} bind:camera />
 				<HemisphereLight intensity={0.9} diffuse={SKY_DIFFUSE} groundColor={GROUND_BOUNCE} />
 				<Grassland />
-				<Character />
+				<Character bind:mesh={character} {camera} />
 			</Scene>
 		</Canvas>
 	</div>
