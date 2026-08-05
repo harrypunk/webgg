@@ -4,6 +4,7 @@
 	import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
 	import type { Nullable } from '@babylonjs/core/types';
+	import type { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import { getSceneContext } from '$lib/babylon/context';
 	import { useMovement } from '$lib/babylon/useMovement';
 	import type { ViewAxis } from './viewAxis';
@@ -14,6 +15,7 @@
 		speed?: number;
 		/** Shared view axis (owned by the camera) steering WASD movement. */
 		axis?: Nullable<ViewAxis>;
+		shadowGenerator?: Nullable<ShadowGenerator>;
 		mesh?: Nullable<Mesh>;
 	}
 
@@ -22,7 +24,7 @@
 		size = 1,
 		speed = 5,
 		axis = null,
-		// eslint-disable-next-line no-useless-assignment
+		shadowGenerator = null,
 		mesh = $bindable(null)
 	}: Props = $props();
 
@@ -66,6 +68,18 @@
 			mesh = null;
 			character.dispose();
 			mat.dispose();
+		};
+	});
+
+	// Synced subscription: keep the shadow generator's caster list in sync with
+	// the character and generator instances, with cleanup on change or teardown.
+	$effect(() => {
+		const m = mesh;
+		const sg = shadowGenerator;
+		if (!m || !sg) return;
+		sg.addShadowCaster(m);
+		return () => {
+			sg.removeShadowCaster(m);
 		};
 	});
 </script>

@@ -14,8 +14,8 @@
 	import DebugButton from './DebugButton.svelte';
 	import Camera from './Camera.svelte';
 	import HemisphereLight from '$lib/babylon/HemisphereLight.svelte';
-	import DirectionalLight from './DirectionalLight.svelte';
-	import ShadowGenerator from './ShadowGenerator.svelte';
+	import DirectionalLight from '$lib/babylon/DirectionalLight.svelte';
+	import ShadowGenerator from '$lib/babylon/ShadowGenerator.svelte';
 	import Ground from './Ground.svelte';
 	import Walls from './Walls.svelte';
 	import Paddle from './Paddle.svelte';

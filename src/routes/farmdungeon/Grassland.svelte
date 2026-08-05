@@ -24,6 +24,7 @@
 		// Matte grass: kill the specular highlight so the sun light reads soft.
 		mat.specularColor = new Color3(0, 0, 0);
 		ground.material = mat;
+		ground.receiveShadows = true;
 
 		return () => {
 			ground.dispose();

@@ -3,9 +3,13 @@
 	import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
 	import type { Nullable } from '@babylonjs/core/types';
 	import type { Mesh } from '@babylonjs/core/Meshes/mesh';
+	import type { DirectionalLight as DirLight } from '@babylonjs/core/Lights/directionalLight';
+	import type { ShadowGenerator as ShadowGen } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
 	import HemisphereLight from '$lib/babylon/HemisphereLight.svelte';
+	import DirectionalLight from '$lib/babylon/DirectionalLight.svelte';
+	import ShadowGenerator from '$lib/babylon/ShadowGenerator.svelte';
 	import Camera from './Camera.svelte';
 	import Grassland from './Grassland.svelte';
 	import Character from './Character.svelte';
@@ -18,12 +22,18 @@
 	const SKY_DIFFUSE = new Color3(0.9, 0.95, 1);
 	// Green bounce light coming back up from the grass.
 	const GROUND_BOUNCE = new Color3(0.3, 0.4, 0.2);
+	// Warm midday sun, high and slightly off-axis so shadows read on the grass.
+	const SUN_POSITION = new Vector3(8, 16, 6);
+	const SUN_DIRECTION = new Vector3(-8, -16, -6).normalize();
+	const SUN_DIFFUSE = new Color3(1, 0.98, 0.9);
 
 	// Shared axis: the camera publishes its view forward, the character reads
 	// it to steer WASD movement.
 	const viewAxis = createViewAxis();
 
 	let character = $state<Nullable<Mesh>>(null);
+	let sun = $state<Nullable<DirLight>>(null);
+	let shadowGenerator = $state<Nullable<ShadowGen>>(null);
 </script>
 
 <section class="page">
@@ -33,9 +43,17 @@
 			<Canvas>
 				<Scene clearColor={SCENE_CLEAR_COLOR}>
 					<Camera target={CAMERA_TARGET} follow={character} axis={viewAxis} />
-					<HemisphereLight intensity={0.9} diffuse={SKY_DIFFUSE} groundColor={GROUND_BOUNCE} />
+					<HemisphereLight intensity={0.6} diffuse={SKY_DIFFUSE} groundColor={GROUND_BOUNCE} />
+					<DirectionalLight
+						direction={SUN_DIRECTION}
+						position={SUN_POSITION}
+						intensity={0.9}
+						diffuse={SUN_DIFFUSE}
+						bind:light={sun}
+					/>
+					<ShadowGenerator light={sun} bind:shadowGenerator />
 					<Grassland />
-					<Character bind:mesh={character} axis={viewAxis} />
+					<Character bind:mesh={character} axis={viewAxis} {shadowGenerator} />
 				</Scene>
 			</Canvas>
 		</div>
