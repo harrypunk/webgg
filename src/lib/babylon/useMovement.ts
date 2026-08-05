@@ -1,11 +1,8 @@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import type { Scene } from '@babylonjs/core/scene';
 import type { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
-import type { Camera } from '@babylonjs/core/Cameras/camera';
 import type { Nullable } from '@babylonjs/core/types';
 import '@babylonjs/core/Collisions/collisionCoordinator';
-// Side-effect import: Camera.getForwardRay() constructs a Ray at runtime.
-import '@babylonjs/core/Culling/ray';
 
 export interface MovementOptions {
 	/**
@@ -20,12 +17,17 @@ export interface MovementOptions {
 	upKey?: string;
 	downKey?: string;
 	/**
-	 * Optional camera making movement camera-relative, as in most 3D games:
-	 * up moves along the camera's ground-projected forward, right strafes to
-	 * its right. Pass a getter (e.g. `() => camera`) so a rebuilt camera is
-	 * picked up live.
+	 * Optional getter for the current "forward" axis (unit vector on the XZ
+	 * plane), e.g. the view forward published by a camera. When set, up/down
+	 * move along it and left/right strafe perpendicular; without it, up is
+	 * world +z. Pass a getter so the axis is read live every frame.
 	 */
-	camera?: () => Nullable<Camera>;
+	frontAxis?: () => Nullable<Vector3>;
+	/**
+	 * When true, yaw the mesh so its +z faces the direction it is moving.
+	 * Meshes not modeled pointing along +z should bake their pose first.
+	 */
+	faceForward?: boolean;
 	useCollisions?: boolean;
 }
 
@@ -34,10 +36,10 @@ export interface MovementOptions {
  *
  * Listens for configurable key codes and updates mesh.position on every
  * scene render tick using delta time for frame-rate-independent motion.
- * Left/right and the optional up/down keys form a 2D input direction; with
- * no `camera` it maps to world x/z (up toward +z), otherwise it is rotated
- * into the camera's view frame. Diagonal motion is normalized so it is not
- * faster than straight motion.
+ * Left/right and the optional up/down keys form a 2D input direction; it is
+ * mapped onto the `frontAxis` (world +z by default), so whoever owns the
+ * axis — e.g. an orbit camera — controls where "forward" points. Diagonal
+ * motion is normalized so it is not faster than straight motion.
  *
  * When `useCollisions` is true, movement uses `moveWithCollisions`, so the
  * mesh is constrained by any scene meshes marked as collision meshes.
@@ -53,7 +55,8 @@ export function useMovement(
 		rightKey = 'KeyD',
 		upKey,
 		downKey,
-		camera,
+		frontAxis,
+		faceForward = false,
 		useCollisions = false
 	}: MovementOptions
 ): () => void {
@@ -87,18 +90,18 @@ export function useMovement(
 		if (x === 0 && z === 0) return;
 
 		let direction = new Vector3(x, 0, z);
-		const cam = camera?.();
-		if (cam) {
-			// Camera-relative: rotate input into the camera's ground-projected
-			// frame — up along its forward, right along up×forward.
-			const forward = cam.getForwardRay().direction;
-			forward.y = 0;
-			forward.normalize();
-			const right = Vector3.Cross(Vector3.Up(), forward);
-			direction = forward.scale(z).add(right.scale(x));
+		const front = frontAxis?.();
+		if (front) {
+			// Axis-relative: up along the front axis, right along up×front.
+			const right = Vector3.Cross(Vector3.Up(), front);
+			direction = front.scale(z).add(right.scale(x));
 		}
 
 		const currentSpeed = typeof speed === 'function' ? speed() : speed;
+		if (faceForward) {
+			// Yaw so the mesh's +z faces the way it is moving.
+			mesh.rotation.y = Math.atan2(direction.x, direction.z);
+		}
 		const displacement = direction.normalize().scale(currentSpeed * dt);
 		if (useCollisions) {
 			mesh.moveWithCollisions(displacement);

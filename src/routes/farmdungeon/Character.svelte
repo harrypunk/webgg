@@ -1,19 +1,19 @@
 <script lang="ts">
 	import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 	import type { Mesh } from '@babylonjs/core/Meshes/mesh';
-	import type { Camera } from '@babylonjs/core/Cameras/camera';
 	import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
 	import type { Nullable } from '@babylonjs/core/types';
 	import { getSceneContext } from '$lib/babylon/context';
 	import { useMovement } from '$lib/babylon/useMovement';
+	import type { ViewAxis } from './viewAxis';
 
 	interface Props {
 		name?: string;
 		size?: number;
 		speed?: number;
-		/** Orbit camera used to make WASD movement camera-relative. */
-		camera?: Nullable<Camera>;
+		/** Shared view axis (owned by the camera) steering WASD movement. */
+		axis?: Nullable<ViewAxis>;
 		mesh?: Nullable<Mesh>;
 	}
 
@@ -21,7 +21,7 @@
 		name = 'character',
 		size = 1,
 		speed = 5,
-		camera = null,
+		axis = null,
 		// eslint-disable-next-line no-useless-assignment
 		mesh = $bindable(null)
 	}: Props = $props();
@@ -29,31 +29,42 @@
 	const sceneCtx = getSceneContext();
 
 	// Creation effect only: `name` and `size` are create-only — changing them
-	// rebuilds the mesh. `speed` and `camera` are passed as getters so they are
+	// rebuilds the mesh. `speed` and `axis` are passed as getters so they are
 	// read live every frame instead of being tracked by this effect.
 	$effect(() => {
 		if (!sceneCtx.scene) return;
 
-		const cube = MeshBuilder.CreateBox(name, { size }, sceneCtx.scene);
+		// A cone: a cylinder with a zero-width top.
+		const character = MeshBuilder.CreateCylinder(
+			name,
+			{ diameterTop: 0, diameterBottom: size, height: size },
+			sceneCtx.scene
+		);
 		const mat = new StandardMaterial(`${name}Mat`, sceneCtx.scene);
 		mat.diffuseColor = new Color3(0.9, 0.5, 0.2);
 		mat.specularColor = new Color3(0.1, 0.1, 0.1);
-		cube.material = mat;
-		// Rest the cube on the grass instead of sinking halfway into it.
-		cube.position.y = size / 2;
-		mesh = cube;
+		character.material = mat;
+		// Lay the cone on its side with the apex pointing +z (movement forward),
+		// and bake the pose so plain rotation.y can steer the heading.
+		character.rotation.x = Math.PI / 2;
+		character.bakeCurrentTransformIntoVertices();
+		character.rotation.x = 0;
+		// Rest the cone on the grass: lying flat, its radius is half the size.
+		character.position.y = size / 2;
+		mesh = character;
 
-		const detachMovement = useMovement(sceneCtx.scene, cube, {
+		const detachMovement = useMovement(sceneCtx.scene, character, {
 			speed: () => speed,
 			upKey: 'KeyW',
 			downKey: 'KeyS',
-			camera: () => camera
+			frontAxis: () => axis?.front ?? null,
+			faceForward: true
 		});
 
 		return () => {
 			detachMovement();
 			mesh = null;
-			cube.dispose();
+			character.dispose();
 			mat.dispose();
 		};
 	});
