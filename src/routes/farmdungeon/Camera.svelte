@@ -30,6 +30,13 @@
 		if (!sceneCtx.scene) return;
 
 		const cam = new ArcRotateCamera(name, 0, 0, 10, Vector3.Zero(), sceneCtx.scene);
+		// WoW-style orbit: dragging always rotates around the target, never pans.
+		cam.panningSensibility = 0;
+		// Clamp zoom and keep the camera above the grass.
+		cam.lowerRadiusLimit = 4;
+		cam.upperRadiusLimit = 25;
+		cam.lowerBetaLimit = 0.15;
+		cam.upperBetaLimit = Math.PI / 2 - 0.05;
 		camera = cam;
 
 		return () => {
