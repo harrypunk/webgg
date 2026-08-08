@@ -2,9 +2,13 @@
 	import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 	import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
+	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 	import type { Nullable } from '@babylonjs/core/types';
 	import { getSceneContext } from '$lib/babylon/context';
 	import { useMovement } from '$lib/babylon/useMovement';
+
+	// The square slides along world x, so its forward axis is fixed.
+	const FRONT_AXIS = new Vector3(0, 0, 1);
 
 	interface Props {
 		name?: string;
@@ -39,7 +43,11 @@
 		square.material = material;
 		mat = material;
 
-		const detachMovement = useMovement(sceneCtx.scene, square, { speed: () => speed });
+		const detachMovement = useMovement(sceneCtx.scene, {
+			speed: () => speed,
+			frontAxis: () => FRONT_AXIS,
+			onMove: (d) => square.position.addInPlace(d)
+		});
 
 		return () => {
 			detachMovement();

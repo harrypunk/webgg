@@ -8,6 +8,7 @@
 	import type { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import { getSceneContext } from '$lib/babylon/context';
 	import { useMovement } from '$lib/babylon/useMovement';
+	import '@babylonjs/core/Collisions/collisionCoordinator';
 
 	interface Props {
 		name?: string;
@@ -34,6 +35,9 @@
 	const sceneCtx = getSceneContext();
 	let paddle = $state<Nullable<Mesh>>(null);
 
+	// The paddle slides along world x, so its forward axis is fixed.
+	const FRONT_AXIS = new Vector3(0, 0, 1);
+
 	// Creation effect: `name`, dimensions and start position are create-only —
 	// changing them rebuilds the mesh. `speed` is passed as a getter so it is
 	// read live every frame instead of being tracked by this effect.
@@ -50,11 +54,13 @@
 		newPaddle.position.y = 1.5;
 		// Match the collision volume to the paddle's actual size so it stops right at the walls.
 		newPaddle.ellipsoid = new Vector3(width / 2, height / 2, depth / 2);
+		newPaddle.checkCollisions = true;
 
 		paddle = newPaddle;
-		const detachMovement = useMovement(sceneCtx.scene, newPaddle, {
+		const detachMovement = useMovement(sceneCtx.scene, {
 			speed: () => speed,
-			useCollisions: true
+			frontAxis: () => FRONT_AXIS,
+			onMove: (d) => newPaddle.moveWithCollisions(d)
 		});
 
 		return () => {

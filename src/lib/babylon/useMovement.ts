@@ -1,70 +1,49 @@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import type { Scene } from '@babylonjs/core/scene';
-import type { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
-import type { Nullable } from '@babylonjs/core/types';
-import '@babylonjs/core/Collisions/collisionCoordinator';
 
 export interface MovementOptions {
 	/**
-	 * Movement speed in units per second. Pass a getter (e.g. `() => speed`)
-	 * to keep the value live: it is then read every frame, so prop updates
-	 * apply immediately without recreating anything.
+	 * Movement speed in units per second, as a getter (e.g. `() => speed`) so
+	 * it is read live every frame and prop updates apply immediately without
+	 * recreating anything.
 	 */
-	speed: number | (() => number);
+	speed: () => number;
 	leftKey?: string;
 	rightKey?: string;
-	/** Optional: when set, the mesh also moves on the z axis (W/S-style). */
+	/** Optional: when set, up/down keys are tracked too (W/S-style). */
 	upKey?: string;
 	downKey?: string;
 	/**
-	 * Optional getter for the current "forward" axis (unit vector on the XZ
-	 * plane), e.g. the view forward published by a camera. When set, up/down
-	 * move along it and left/right strafe perpendicular; without it, up is
-	 * world +z. Pass a getter so the axis is read live every frame.
+	 * Getter for the current "forward" axis (unit vector on the XZ plane),
+	 * e.g. the view forward published by a camera, or a constant for
+	 * world-aligned movement. Up/down move along it and left/right strafe
+	 * perpendicular. Pass a getter so the axis is read live every frame.
 	 */
-	frontAxis?: () => Nullable<Vector3>;
+	frontAxis: () => Vector3;
 	/**
-	 * When true, yaw the mesh so its +z faces the direction it is moving.
-	 * Meshes not modeled pointing along +z should bake their pose first.
+	 * Called every frame while keys are held, with the frame's displacement
+	 * vector (units, scaled by speed and delta time). What happens with it —
+	 * move a mesh, collide, steer facing — is the caller's decision.
 	 */
-	faceForward?: boolean;
-	useCollisions?: boolean;
+	onMove: (displacement: Vector3) => void;
 }
 
 /**
- * Attaches keyboard-driven horizontal movement to a Babylon mesh.
+ * Listens for configurable WASD-style key codes and, on every scene render
+ * tick, turns the held keys into a delta-time-scaled displacement vector on
+ * the XZ plane, reported via `onMove`. The input direction is mapped onto
+ * `frontAxis` (up along it, right along up×front). Diagonal motion is
+ * normalized so it is not faster than straight motion.
  *
- * Listens for configurable key codes and updates mesh.position on every
- * scene render tick using delta time for frame-rate-independent motion.
- * Left/right and the optional up/down keys form a 2D input direction; it is
- * mapped onto the `frontAxis` (world +z by default), so whoever owns the
- * axis — e.g. an orbit camera — controls where "forward" points. Diagonal
- * motion is normalized so it is not faster than straight motion.
- *
- * When `useCollisions` is true, movement uses `moveWithCollisions`, so the
- * mesh is constrained by any scene meshes marked as collision meshes.
+ * The helper never touches any mesh — input and vector math only.
  *
  * Returns a detach function to clean up listeners and the render observer.
  */
 export function useMovement(
 	scene: Scene,
-	mesh: AbstractMesh,
-	{
-		speed,
-		leftKey = 'KeyA',
-		rightKey = 'KeyD',
-		upKey,
-		downKey,
-		frontAxis,
-		faceForward = false,
-		useCollisions = false
-	}: MovementOptions
+	{ speed, leftKey = 'KeyA', rightKey = 'KeyD', upKey, downKey, frontAxis, onMove }: MovementOptions
 ): () => void {
 	const input = { left: false, right: false, up: false, down: false };
-
-	if (useCollisions) {
-		mesh.checkCollisions = true;
-	}
 
 	const onKeyDown = (e: KeyboardEvent) => {
 		if (e.code === leftKey) input.left = true;
@@ -89,25 +68,13 @@ export function useMovement(
 		const z = (input.up ? 1 : 0) - (input.down ? 1 : 0);
 		if (x === 0 && z === 0) return;
 
-		let direction = new Vector3(x, 0, z);
-		const front = frontAxis?.();
-		if (front) {
-			// Axis-relative: up along the front axis, right along up×front.
-			const right = Vector3.Cross(Vector3.Up(), front);
-			direction = front.scale(z).add(right.scale(x));
-		}
+		// Axis-relative: up along the front axis, right along up×front.
+		const front = frontAxis();
+		const right = Vector3.Cross(Vector3.Up(), front);
+		const direction = front.scale(z).add(right.scale(x));
 
-		const currentSpeed = typeof speed === 'function' ? speed() : speed;
-		if (faceForward) {
-			// Yaw so the mesh's +z faces the way it is moving.
-			mesh.rotation.y = Math.atan2(direction.x, direction.z);
-		}
-		const displacement = direction.normalize().scale(currentSpeed * dt);
-		if (useCollisions) {
-			mesh.moveWithCollisions(displacement);
-		} else {
-			mesh.position.addInPlace(displacement);
-		}
+		const currentSpeed = speed();
+		onMove(direction.normalize().scale(currentSpeed * dt));
 	});
 
 	return () => {

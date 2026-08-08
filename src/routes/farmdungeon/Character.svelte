@@ -14,7 +14,7 @@
 		size?: number;
 		speed?: number;
 		/** Shared view axis (owned by the camera) steering WASD movement. */
-		axis?: Nullable<ViewAxis>;
+		axis: ViewAxis;
 		shadowGenerator?: Nullable<ShadowGenerator>;
 		mesh?: Nullable<Mesh>;
 	}
@@ -23,7 +23,7 @@
 		name = 'character',
 		size = 1,
 		speed = 5,
-		axis = null,
+		axis,
 		shadowGenerator = null,
 		mesh = $bindable(null)
 	}: Props = $props();
@@ -55,12 +55,16 @@
 		character.position.y = size / 2;
 		mesh = character;
 
-		const detachMovement = useMovement(sceneCtx.scene, character, {
+		const detachMovement = useMovement(sceneCtx.scene, {
 			speed: () => speed,
 			upKey: 'KeyW',
 			downKey: 'KeyS',
-			frontAxis: () => axis?.front ?? null,
-			faceForward: true
+			frontAxis: () => axis.front,
+			onMove: (d) => {
+				character.position.addInPlace(d);
+				// Steer the cone's apex (baked to +z) into the movement direction.
+				character.rotation.y = Math.atan2(d.x, d.z);
+			}
 		});
 
 		return () => {
