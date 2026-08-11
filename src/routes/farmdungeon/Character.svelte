@@ -5,8 +5,9 @@
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
 	import type { Nullable } from '@babylonjs/core/types';
 	import type { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
-	import { getSceneContext } from '$lib/babylon/context';
+	import { getEngineContext, getSceneContext } from '$lib/babylon/context';
 	import { useMovement } from '$lib/babylon/useMovement';
+	import { createGameInputSources } from '$lib/babylon/gameInput';
 	import type { ViewAxis } from './viewAxis';
 
 	interface Props {
@@ -29,20 +30,23 @@
 	}: Props = $props();
 
 	const sceneCtx = getSceneContext();
+	const engineCtx = getEngineContext();
 
 	// Creation effect only: `name` and `size` are create-only — changing them
 	// rebuilds the mesh. `speed` and `axis` are passed as getters so they are
 	// read live every frame instead of being tracked by this effect.
 	$effect(() => {
-		if (!sceneCtx.scene) return;
+		const scene = sceneCtx.scene;
+		const canvas = engineCtx.canvas;
+		if (!scene || !canvas) return;
 
 		// A cone: a cylinder with a zero-width top.
 		const character = MeshBuilder.CreateCylinder(
 			name,
 			{ diameterTop: 0, diameterBottom: size, height: size },
-			sceneCtx.scene
+			scene
 		);
-		const mat = new StandardMaterial(`${name}Mat`, sceneCtx.scene);
+		const mat = new StandardMaterial(`${name}Mat`, scene);
 		mat.diffuseColor = new Color3(0.9, 0.5, 0.2);
 		mat.specularColor = new Color3(0.1, 0.1, 0.1);
 		character.material = mat;
@@ -55,11 +59,10 @@
 		character.position.y = size / 2;
 		mesh = character;
 
-		const detachMovement = useMovement(sceneCtx.scene, {
+		const detachMovement = useMovement(scene, {
 			speed: () => speed,
-			upKey: 'KeyW',
-			downKey: 'KeyS',
 			frontAxis: () => axis.front,
+			sources: createGameInputSources(canvas),
 			onMove: (d) => {
 				character.position.addInPlace(d);
 				// Steer the cone's apex (baked to +z) into the movement direction.

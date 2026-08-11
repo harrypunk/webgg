@@ -4,10 +4,11 @@
 	import { Color3 } from '@babylonjs/core/Maths/math.color';
 	import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 	import type { Nullable } from '@babylonjs/core/types';
-	import { getSceneContext } from '$lib/babylon/context';
+	import { getEngineContext, getSceneContext } from '$lib/babylon/context';
 	import { useMovement } from '$lib/babylon/useMovement';
+	import { createGameInputSources } from '$lib/babylon/gameInput';
 
-	// The square slides along world x, so its forward axis is fixed.
+	// The square moves on the world XZ plane, so its forward axis is fixed.
 	const FRONT_AXIS = new Vector3(0, 0, 1);
 
 	interface Props {
@@ -27,25 +28,29 @@
 	}: Props = $props();
 
 	const sceneCtx = getSceneContext();
+	const engineCtx = getEngineContext();
 	let mat = $state<Nullable<StandardMaterial>>(null);
 
 	// Creation effect: `name`, `size` and `y` are create-only — changing them
 	// rebuilds the mesh. `speed` is passed as a getter so it is read live every
 	// frame instead of being tracked by this effect.
 	$effect(() => {
-		if (!sceneCtx.scene) return;
+		const scene = sceneCtx.scene;
+		const canvas = engineCtx.canvas;
+		if (!scene || !canvas) return;
 
-		const square = MeshBuilder.CreatePlane(name, { size }, sceneCtx.scene);
+		const square = MeshBuilder.CreatePlane(name, { size }, scene);
 		square.position.y = y;
 
-		const material = new StandardMaterial(`${name}Mat`, sceneCtx.scene);
+		const material = new StandardMaterial(`${name}Mat`, scene);
 		material.disableLighting = true;
 		square.material = material;
 		mat = material;
 
-		const detachMovement = useMovement(sceneCtx.scene, {
+		const detachMovement = useMovement(scene, {
 			speed: () => speed,
 			frontAxis: () => FRONT_AXIS,
+			sources: createGameInputSources(canvas),
 			onMove: (d) => square.position.addInPlace(d)
 		});
 
