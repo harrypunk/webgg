@@ -33,8 +33,8 @@ export function useKeyboardVector(element: HTMLElement): InputVectorSource {
 
 	return {
 		read: () => ({
-			x: (held.right ? 1 : 0) - (held.left ? 1 : 0),
-			y: (held.up ? 1 : 0) - (held.down ? 1 : 0)
+			right: (held.right ? 1 : 0) - (held.left ? 1 : 0),
+			forward: (held.up ? 1 : 0) - (held.down ? 1 : 0)
 		}),
 		detach: () => {
 			element.removeEventListener('keydown', onKey);

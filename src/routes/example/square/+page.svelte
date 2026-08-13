@@ -39,7 +39,9 @@
 	</Canvas>
 	{#snippet panel()}
 		<h2>Controls</h2>
-		<p>Move with <kbd>A</kbd> / <kbd>D</kbd> · Pan: middle-mouse drag</p>
+		<p>
+			Move with <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> · Pan: middle-mouse drag
+		</p>
 		<CameraTools position={camera.position} onPan={camera.pan} />
 	{/snippet}
 </GameLayout>

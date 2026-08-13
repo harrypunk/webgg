@@ -8,8 +8,9 @@
 	import { useMovement } from '$lib/babylon/useMovement';
 	import { createGameInputSources } from '$lib/babylon/gameInput';
 
-	// The square moves on the world XZ plane, so its forward axis is fixed.
-	const FRONT_AXIS = new Vector3(0, 0, 1);
+	// This 2D scene lives on the XY plane: screen up is +y, screen right +x.
+	const FRONT_AXIS = new Vector3(0, 1, 0);
+	const RIGHT_AXIS = new Vector3(1, 0, 0);
 
 	interface Props {
 		name?: string;
@@ -50,6 +51,7 @@
 		const detachMovement = useMovement(scene, {
 			speed: () => speed,
 			frontAxis: () => FRONT_AXIS,
+			rightAxis: () => RIGHT_AXIS,
 			sources: createGameInputSources(canvas),
 			onMove: (d) => square.position.addInPlace(d)
 		});

@@ -14,13 +14,13 @@ export function useGamepadVector(deadZone = 0.15): InputVectorSource {
 			const pads = navigator.getGamepads?.() ?? [];
 			for (const pad of pads) {
 				if (!pad?.connected) continue;
-				const x = pad.axes[0] ?? 0;
-				// Stick up reports negative y — flip so y is "forward".
-				const y = -(pad.axes[1] ?? 0);
-				if (Math.hypot(x, y) < deadZone) return { x: 0, y: 0 };
-				return { x, y };
+				const right = pad.axes[0] ?? 0;
+				// Stick up reports negative y — flip so it reads as "forward".
+				const forward = -(pad.axes[1] ?? 0);
+				if (Math.hypot(right, forward) < deadZone) return { right: 0, forward: 0 };
+				return { right, forward };
 			}
-			return { x: 0, y: 0 };
+			return { right: 0, forward: 0 };
 		}
 	};
 }

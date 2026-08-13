@@ -1,10 +1,10 @@
 import { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import type { Scene } from '@babylonjs/core/scene';
 
-/** A 2D input direction: x = right, y = forward, each component in [-1, 1]. */
+/** A 2D input direction: strafe right and move forward, each in [-1, 1]. */
 export interface InputVector {
-	x: number;
-	y: number;
+	right: number;
+	forward: number;
 }
 
 /**
@@ -26,12 +26,18 @@ export interface MovementOptions {
 	 */
 	speed: () => number;
 	/**
-	 * Getter for the current "forward" axis (unit vector on the XZ plane),
-	 * e.g. the view forward published by a camera, or a constant for
-	 * world-aligned movement. Up/down move along it and left/right strafe
-	 * perpendicular. Pass a getter so the axis is read live every frame.
+	 * Getter for the current "forward" axis (unit vector), e.g. the view
+	 * forward published by a camera, or a constant for world-aligned
+	 * movement. Forward input moves along it. Pass a getter so the axis is
+	 * read live every frame.
 	 */
 	frontAxis: () => Vector3;
+	/**
+	 * Getter for the "strafe right" axis (unit vector). Defaults to
+	 * up×front, which suits movement on the XZ ground plane; pass an
+	 * explicit axis for scenes on another plane (e.g. a 2D XY scene).
+	 */
+	rightAxis?: () => Vector3;
 	/**
 	 * Input devices to combine. The manager takes over their lifetime and
 	 * detaches them when its own detach function is called.
@@ -47,11 +53,10 @@ export interface MovementOptions {
 
 /**
  * Movement manager: on every scene render tick it combines the vectors from
- * its input `sources`, maps the result onto `frontAxis` (forward along it,
- * right along up×front), and reports a delta-time-scaled displacement via
- * `onMove`. The combined input length is capped at 1, so diagonal keyboard
- * input is not faster than straight while analog (gamepad) magnitude is
- * preserved.
+ * its input `sources`, maps the result onto the front/right axes, and
+ * reports a delta-time-scaled displacement via `onMove`. The combined input
+ * length is capped at 1, so diagonal keyboard input is not faster than
+ * straight while analog (gamepad) magnitude is preserved.
  *
  * The manager never touches any mesh — input and vector math only.
  *
@@ -60,24 +65,25 @@ export interface MovementOptions {
  */
 export function useMovement(
 	scene: Scene,
-	{ speed, frontAxis, sources, onMove }: MovementOptions
+	{ speed, frontAxis, rightAxis, sources, onMove }: MovementOptions
 ): () => void {
 	const observer = scene.onBeforeRenderObservable.add(() => {
-		let x = 0;
-		let y = 0;
+		let right = 0;
+		let forward = 0;
 		for (const source of sources) {
 			const v = source.read();
-			x += v.x;
-			y += v.y;
+			right += v.right;
+			forward += v.forward;
 		}
-		if (x === 0 && y === 0) return;
+		if (right === 0 && forward === 0) return;
 
-		const input = new Vector3(x, 0, y);
+		const input = new Vector3(right, 0, forward);
 		if (input.lengthSquared() > 1) input.normalize();
 
 		const front = frontAxis();
-		const right = Vector3.Cross(Vector3.Up(), front);
-		const direction = front.scale(input.z).add(right.scale(input.x));
+		// Default: ground-plane movement, right = up×front.
+		const strafe = rightAxis?.() ?? Vector3.Cross(Vector3.Up(), front);
+		const direction = front.scale(input.z).add(strafe.scale(input.x));
 
 		const dt = scene.getEngine().getDeltaTime() / 1000;
 		onMove(direction.scale(speed() * dt));
