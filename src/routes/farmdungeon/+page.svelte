@@ -11,7 +11,7 @@
 	import DirectionalLight from '$lib/babylon/DirectionalLight.svelte';
 	import ShadowGenerator from '$lib/babylon/ShadowGenerator.svelte';
 	import Camera from './Camera.svelte';
-	import Grassland from './Grassland.svelte';
+	import Ground from './Ground.svelte';
 	import Character from './Character.svelte';
 	import AxisReadout from './AxisReadout.svelte';
 	import { createViewAxis } from './viewAxis';
@@ -52,7 +52,7 @@
 						bind:light={sun}
 					/>
 					<ShadowGenerator light={sun} bind:shadowGenerator />
-					<Grassland />
+					<Ground />
 					<Character bind:mesh={character} axis={viewAxis} {shadowGenerator} />
 				</Scene>
 			</Canvas>
