@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import favicon from '$lib/assets/favicon.svg';
+	import SideNav from '$lib/components/SideNav.svelte';
 	import '$lib/styles/app.css';
 
 	let { children } = $props();
@@ -17,9 +18,12 @@
 	</nav>
 </header>
 
-<main>
-	{@render children()}
-</main>
+<div class="shell">
+	<SideNav />
+	<main>
+		{@render children()}
+	</main>
+</div>
 
 <style>
 	:global(*) {
@@ -60,6 +64,12 @@
 	nav a:hover {
 		color: var(--color-primary);
 		text-shadow: var(--glow-primary);
+	}
+
+	.shell {
+		flex: 1;
+		min-height: 0;
+		display: flex;
 	}
 
 	main {
