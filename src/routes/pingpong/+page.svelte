@@ -8,9 +8,7 @@
 	import type { ShadowGenerator as ShadowGen } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
-	import { createFullscreen } from '$lib/attachments/fullscreen.svelte.js';
-	import FullscreenButton from '$lib/components/FullscreenButton.svelte';
-	import FullscreenIcon from '$lib/components/FullscreenIcon.svelte';
+	import GameLayout from '$lib/components/GameLayout.svelte';
 	import DebugButton from './DebugButton.svelte';
 	import Camera from './Camera.svelte';
 	import HemisphereLight from '$lib/babylon/HemisphereLight.svelte';
@@ -34,69 +32,29 @@
 	let light = $state<Nullable<DirLight>>(null);
 	let shadowGenerator = $state<Nullable<ShadowGen>>(null);
 	let debug = $state(false);
-	let canvasElement = $state<HTMLElement>();
-	const fullscreenController = createFullscreen(() => canvasElement);
 </script>
 
-<section class="page">
-	<h1>Ping Pong</h1>
-	<div class="canvas-layout">
-		<div class="canvas-pane">
-			<Canvas bind:element={canvasElement}>
-				<Scene bind:scene clearColor={SCENE_CLEAR_COLOR}>
-					<Camera position={CAMERA_POSITION} target={CAMERA_TARGET} interactive={debug} />
-					<HemisphereLight intensity={0.4} diffuse={LIGHT_DIFFUSE} groundColor={GROUND_COLOR} />
-					<DirectionalLight
-						direction={DIRECTIONAL_DIRECTION}
-						position={DIRECTIONAL_POSITION}
-						intensity={0.8}
-						diffuse={DIRECTIONAL_DIFFUSE}
-						bind:light
-					/>
-					<ShadowGenerator {light} bind:shadowGenerator />
-					<Ground />
-					<Walls />
-					<Paddle {shadowGenerator} />
-					<AxisGizmo visible={debug} />
-				</Scene>
-				<FullscreenIcon {fullscreenController} />
-			</Canvas>
-		</div>
-		<aside class="side-panel">
-			<h2>Controls</h2>
-			<DebugButton bind:debug />
-			<FullscreenButton {fullscreenController} />
-		</aside>
-	</div>
-</section>
-
-<style>
-	.canvas-layout {
-		flex: 1;
-		min-height: 0;
-		display: flex;
-		flex-direction: row;
-		gap: 1rem;
-		overflow: hidden;
-	}
-
-	.side-panel {
-		width: 220px;
-		flex-shrink: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		padding: 1rem;
-		background: var(--color-bg);
-		border: 2px solid var(--color-primary);
-		box-shadow: var(--glow-primary-lg);
-		overflow-y: auto;
-	}
-
-	.side-panel h2 {
-		font-size: 1rem;
-		color: var(--color-primary);
-		text-shadow: var(--glow-primary-sm);
-		margin: 0;
-	}
-</style>
+<GameLayout title="Ping Pong">
+	<Canvas>
+		<Scene bind:scene clearColor={SCENE_CLEAR_COLOR}>
+			<Camera position={CAMERA_POSITION} target={CAMERA_TARGET} interactive={debug} />
+			<HemisphereLight intensity={0.4} diffuse={LIGHT_DIFFUSE} groundColor={GROUND_COLOR} />
+			<DirectionalLight
+				direction={DIRECTIONAL_DIRECTION}
+				position={DIRECTIONAL_POSITION}
+				intensity={0.8}
+				diffuse={DIRECTIONAL_DIFFUSE}
+				bind:light
+			/>
+			<ShadowGenerator {light} bind:shadowGenerator />
+			<Ground />
+			<Walls />
+			<Paddle {shadowGenerator} />
+			<AxisGizmo visible={debug} />
+		</Scene>
+	</Canvas>
+	{#snippet panel()}
+		<h2>Controls</h2>
+		<DebugButton bind:debug />
+	{/snippet}
+</GameLayout>

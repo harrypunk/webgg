@@ -7,6 +7,7 @@
 	import type { ShadowGenerator as ShadowGen } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
+	import GameLayout from '$lib/components/GameLayout.svelte';
 	import HemisphereLight from '$lib/babylon/HemisphereLight.svelte';
 	import DirectionalLight from '$lib/babylon/DirectionalLight.svelte';
 	import ShadowGenerator from '$lib/babylon/ShadowGenerator.svelte';
@@ -36,61 +37,25 @@
 	let shadowGenerator = $state<Nullable<ShadowGen>>(null);
 </script>
 
-<section class="page">
-	<h1>Farm Dungeon</h1>
-	<div class="canvas-layout">
-		<div class="canvas-pane">
-			<Canvas>
-				<Scene clearColor={SCENE_CLEAR_COLOR}>
-					<Camera target={CAMERA_TARGET} follow={character} axis={viewAxis} />
-					<HemisphereLight intensity={0.6} diffuse={SKY_DIFFUSE} groundColor={GROUND_BOUNCE} />
-					<DirectionalLight
-						direction={SUN_DIRECTION}
-						position={SUN_POSITION}
-						intensity={0.9}
-						diffuse={SUN_DIFFUSE}
-						bind:light={sun}
-					/>
-					<ShadowGenerator light={sun} bind:shadowGenerator />
-					<Ground />
-					<Character bind:mesh={character} axis={viewAxis} {shadowGenerator} />
-				</Scene>
-			</Canvas>
-		</div>
-		<aside class="side-panel">
-			<h2>Debug</h2>
-			<AxisReadout axis={viewAxis} />
-		</aside>
-	</div>
-</section>
-
-<style>
-	.canvas-layout {
-		flex: 1;
-		min-height: 0;
-		display: flex;
-		flex-direction: row;
-		gap: 1rem;
-		overflow: hidden;
-	}
-
-	.side-panel {
-		width: 220px;
-		flex-shrink: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		padding: 1rem;
-		background: var(--color-bg);
-		border: 2px solid var(--color-primary);
-		box-shadow: var(--glow-primary-lg);
-		overflow-y: auto;
-	}
-
-	.side-panel h2 {
-		font-size: 1rem;
-		color: var(--color-primary);
-		text-shadow: var(--glow-primary-sm);
-		margin: 0;
-	}
-</style>
+<GameLayout title="Farm Dungeon">
+	<Canvas>
+		<Scene clearColor={SCENE_CLEAR_COLOR}>
+			<Camera target={CAMERA_TARGET} follow={character} axis={viewAxis} />
+			<HemisphereLight intensity={0.6} diffuse={SKY_DIFFUSE} groundColor={GROUND_BOUNCE} />
+			<DirectionalLight
+				direction={SUN_DIRECTION}
+				position={SUN_POSITION}
+				intensity={0.9}
+				diffuse={SUN_DIFFUSE}
+				bind:light={sun}
+			/>
+			<ShadowGenerator light={sun} bind:shadowGenerator />
+			<Ground />
+			<Character bind:mesh={character} axis={viewAxis} {shadowGenerator} />
+		</Scene>
+	</Canvas>
+	{#snippet panel()}
+		<h2>Debug</h2>
+		<AxisReadout axis={viewAxis} />
+	{/snippet}
+</GameLayout>

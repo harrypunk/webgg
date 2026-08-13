@@ -3,9 +3,7 @@
 	import type { Scene as BabylonScene } from '@babylonjs/core/scene';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
-	import { createFullscreen } from '$lib/attachments/fullscreen.svelte.js';
-	import FullscreenButton from '$lib/components/FullscreenButton.svelte';
-	import FullscreenIcon from '$lib/components/FullscreenIcon.svelte';
+	import GameLayout from '$lib/components/GameLayout.svelte';
 	import CubeScene from './CubeScene.svelte';
 	import SphereScene from './SphereScene.svelte';
 	import ConeScene from './ConeScene.svelte';
@@ -18,8 +16,6 @@
 
 	let activeIndex = $state(0);
 	let scene = $state<Nullable<BabylonScene>>(null);
-	let canvasElement = $state<HTMLElement>();
-	const fullscreenController = createFullscreen(() => canvasElement);
 
 	function next() {
 		activeIndex = (activeIndex + 1) % scenes.length;
@@ -32,43 +28,44 @@
 	const ActiveScene = $derived(scenes[activeIndex].component);
 </script>
 
-<section class="page">
-	<h1>Switch Scene Example</h1>
-	<div class="controls">
-		<button onclick={prev}>Prev</button>
-		<span class="label">{scenes[activeIndex].name}</span>
-		<button onclick={next}>Next</button>
-		<FullscreenButton {fullscreenController} />
-	</div>
-	<Canvas bind:element={canvasElement}>
+<GameLayout title="Switch Scene Example">
+	<Canvas>
 		{#key activeIndex}
 			<Scene bind:scene>
 				<ActiveScene />
 			</Scene>
 		{/key}
-		<FullscreenIcon {fullscreenController} />
 	</Canvas>
-</section>
+	{#snippet panel()}
+		<h2>Scene</h2>
+		<div class="switcher">
+			<span class="label">{scenes[activeIndex].name}</span>
+			<div class="switcher-buttons">
+				<button onclick={prev}>Prev</button>
+				<button onclick={next}>Next</button>
+			</div>
+		</div>
+	{/snippet}
+</GameLayout>
 
 <style>
-	button {
-		padding: 0.5rem 1rem;
-		font-size: 1rem;
-		cursor: pointer;
-		background: var(--color-primary);
-		color: var(--color-bg);
-		border: none;
-		border-radius: 4px;
-	}
-
-	button:hover {
-		background: var(--color-primary-hover);
+	.switcher {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 	}
 
 	.label {
-		font-size: 1.25rem;
 		color: var(--color-primary);
-		min-width: 6rem;
 		text-align: center;
+	}
+
+	.switcher-buttons {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.switcher-buttons button {
+		flex: 1;
 	}
 </style>

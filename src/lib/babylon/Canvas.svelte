@@ -60,10 +60,9 @@
 <style>
 	.canvas-wrap {
 		position: relative;
-		/* Raise the game view (canvas, frame, fullscreen icon) above the CRT
-		 * scanline/vignette overlays in app.css, so the effect covers page
-		 * chrome but never the canvas. */
-		z-index: var(--z-crt-exempt);
+		/* CRT exemption lives on the parent `.canvas-pane` (app.css) — setting
+		 * another z-index here would stack the wrap above the pane's fullscreen
+		 * icon and hide it. */
 		flex: 1;
 		min-height: 0;
 		border: 2px solid var(--color-primary);
