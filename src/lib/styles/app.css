@@ -21,15 +21,6 @@
 	--glow-secondary: 0 0 8px var(--color-secondary);
 	--glow-secondary-lg: 0 0 12px var(--color-secondary);
 	--glow-accent: 0 0 6px var(--color-accent);
-
-	/* Stacking model: page content < CRT overlay < exempt surfaces.
-	 * Exempt an element from the CRT effect with
-	 * `position: relative; z-index: var(--z-crt-exempt)` — but note this only
-	 * works while no ancestor creates a stacking context (transform, filter,
-	 * will-change), which would trap the element below the overlay. */
-	--z-crt-scanlines: 9998;
-	--z-crt-vignette: 9999;
-	--z-crt-exempt: 10000;
 }
 
 ::selection {
@@ -71,8 +62,6 @@ nav a {
 	flex: 1;
 	min-width: 0;
 	position: relative;
-	/* Raise the pane (canvas + fullscreen icon) above the CRT overlay. */
-	z-index: var(--z-crt-exempt);
 	display: flex;
 	flex-direction: column;
 }
@@ -132,58 +121,4 @@ nav a {
 	border-radius: 4px;
 	background: var(--color-bg);
 	color: var(--color-primary);
-}
-
-/* CRT overlay adapted from the codefronts.com "retro-futuristic terminal" demo
- * (https://codefronts.com/try/?c=css-retro-designs&d=retro-futuristic-terminal-ui-code).
- * Rolling scanlines + flicker on body::before, vignette on body::after, both
- * fixed and pointer-events:none so they never affect layout or input. They
- * also disappear in fullscreen, since pseudo-elements stay out of the
- * fullscreen top layer. */
-body::before {
-	content: '';
-	position: fixed;
-	inset: 0;
-	pointer-events: none;
-	z-index: var(--z-crt-scanlines);
-	background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0, 0, 0, 0.28) 2px 4px);
-	mix-blend-mode: multiply;
-	animation:
-		crt-roll 8s linear infinite,
-		crt-flicker 5s infinite;
-}
-
-body::after {
-	content: '';
-	position: fixed;
-	inset: 0;
-	pointer-events: none;
-	z-index: var(--z-crt-vignette);
-	background: radial-gradient(120% 120% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.4) 100%);
-}
-
-@keyframes crt-roll {
-	to {
-		background-position: 0 200px;
-	}
-}
-
-@keyframes crt-flicker {
-	0%,
-	96%,
-	100% {
-		opacity: 1;
-	}
-	97% {
-		opacity: 0.78;
-	}
-	98% {
-		opacity: 0.92;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	body::before {
-		animation: none;
-	}
 }

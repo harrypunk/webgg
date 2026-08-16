@@ -60,9 +60,7 @@
 <style>
 	.canvas-wrap {
 		position: relative;
-		/* CRT exemption lives on the parent `.canvas-pane` (app.css) — setting
-		 * another z-index here would stack the wrap above the pane's fullscreen
-		 * icon and hide it. */
+		/* No z-index: the wrap must stay below the pane's fullscreen icon. */
 		flex: 1;
 		min-height: 0;
 		border: 2px solid var(--color-primary);

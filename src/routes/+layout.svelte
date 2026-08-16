@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import favicon from '$lib/assets/favicon.svg';
+	import MeteorSky from '$lib/components/MeteorSky.svelte';
 	import SideNav from '$lib/components/SideNav.svelte';
 	import '$lib/styles/app.css';
 
@@ -11,6 +12,8 @@
 	<link rel="icon" href={favicon} />
 	<title>WebGG — Babylon.js Games</title>
 </svelte:head>
+
+<MeteorSky />
 
 <header>
 	<nav>
@@ -34,9 +37,7 @@
 
 	:global(body) {
 		font-family: 'Share Tech Mono', 'Courier New', monospace;
-		/* Phosphor-terminal backdrop: soft green glow from the top over the base color. */
-		background: radial-gradient(120% 120% at 50% 0%, #0a1c12 0%, var(--color-bg) 70%);
-		background-attachment: fixed;
+		background: var(--color-bg);
 		color: var(--color-text);
 		line-height: 1.6;
 		display: flex;
@@ -45,9 +46,6 @@
 	}
 
 	header {
-		position: relative;
-		/* Keep the navbar above the CRT overlay, like the game canvas. */
-		z-index: var(--z-crt-exempt);
 		padding: 1rem 2rem;
 		border-bottom: 2px solid var(--color-primary);
 		background: var(--color-surface);
