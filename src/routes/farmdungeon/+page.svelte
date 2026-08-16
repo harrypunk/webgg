@@ -7,6 +7,7 @@
 	import type { ShadowGenerator as ShadowGen } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
+	import ClearColor from '$lib/babylon/ClearColor.svelte';
 	import GameLayout from '$lib/components/GameLayout.svelte';
 	import HemisphereLight from '$lib/babylon/HemisphereLight.svelte';
 	import DirectionalLight from '$lib/babylon/DirectionalLight.svelte';
@@ -39,7 +40,8 @@
 
 <GameLayout title="Farm Dungeon">
 	<Canvas>
-		<Scene clearColor={SCENE_CLEAR_COLOR}>
+		<Scene>
+			<ClearColor color={SCENE_CLEAR_COLOR} />
 			<Camera target={CAMERA_TARGET} follow={character} axis={viewAxis} />
 			<HemisphereLight intensity={0.6} diffuse={SKY_DIFFUSE} groundColor={GROUND_BOUNCE} />
 			<DirectionalLight

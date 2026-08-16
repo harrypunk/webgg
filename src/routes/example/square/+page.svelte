@@ -4,6 +4,7 @@
 	import type { Scene as BabylonScene } from '@babylonjs/core/scene';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
+	import ClearColor from '$lib/babylon/ClearColor.svelte';
 	import OrthographicCamera from '$lib/babylon/OrthographicCamera.svelte';
 	import HemisphereLight from '$lib/babylon/HemisphereLight.svelte';
 	import { PannedCamera } from '$lib/babylon/pannedCamera.svelte.js';
@@ -26,7 +27,8 @@
 
 <GameLayout title="Square">
 	<Canvas bind:element={canvasElement}>
-		<Scene bind:scene clearColor={CLEAR_COLOR}>
+		<Scene bind:scene>
+			<ClearColor color={CLEAR_COLOR} />
 			<OrthographicCamera
 				position={camera.position}
 				target={camera.target}

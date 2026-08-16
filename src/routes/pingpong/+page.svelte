@@ -8,6 +8,7 @@
 	import type { ShadowGenerator as ShadowGen } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 	import Canvas from '$lib/babylon/Canvas.svelte';
 	import Scene from '$lib/babylon/Scene.svelte';
+	import ClearColor from '$lib/babylon/ClearColor.svelte';
 	import GameLayout from '$lib/components/GameLayout.svelte';
 	import DebugButton from './DebugButton.svelte';
 	import Camera from './Camera.svelte';
@@ -36,7 +37,8 @@
 
 <GameLayout title="Ping Pong">
 	<Canvas>
-		<Scene bind:scene clearColor={SCENE_CLEAR_COLOR}>
+		<Scene bind:scene>
+			<ClearColor color={SCENE_CLEAR_COLOR} />
 			<Camera position={CAMERA_POSITION} target={CAMERA_TARGET} interactive={debug} />
 			<HemisphereLight intensity={0.4} diffuse={LIGHT_DIFFUSE} groundColor={GROUND_COLOR} />
 			<DirectionalLight
